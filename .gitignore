@@ -1,7 +1,8 @@
+.venv/*
+!.venv/.gitkeep
 *.env
 buildscripts/
 *.css.map
-/.venv/*
 __pycache__/
 .barh/
 .python-version
