@@ -17,6 +17,8 @@ def execute_query(conn, sql, values=None):
     conn.execute(text(sql))
     conn.close()
 
+    conn.commit()
+
 
 def simple_insert(database: str, table: str, columns: list, *args) -> None:
     """Insert a single row into a table"""
