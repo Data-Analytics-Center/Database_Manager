@@ -5,9 +5,10 @@ name = "pypi"
 
 [packages]
 sqlalchemy = "*"
-mkdocstrings-python = "*"
+wheel = "*"
 
 [dev-packages]
+mkdocstrings-python = "*"
 mkdocstrings = "*"
 mkdocs = "*"
 mkdocs-material = "*"
