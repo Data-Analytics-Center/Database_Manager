@@ -1,0 +1,9 @@
+site_name: Database Manager
+theme: material
+plugins:
+  - search
+  - mkdocstrings
+nav:
+  - Home: index.md
+  - Queries: queries.md
+  - Connections: connections.md

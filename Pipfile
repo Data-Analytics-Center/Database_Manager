@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 sqlalchemy = "*"
 pytest = "*"
+mkdocstrings-python = "*"
+mkdocs-material = "*"
+pyodbc = "*"
 
 [dev-packages]
 
