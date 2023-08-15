@@ -7,3 +7,4 @@ __pycache__/
 .barh/
 .python-version
 /temp/*
+*.pytest_cache/*

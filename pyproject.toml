@@ -30,3 +30,10 @@ exclude = [
     "node_modules",
     "venv",
 ]
+
+[build-system]
+requires = ["setuptools", "pytest"]
+
+[project]
+name = "database_manager"
+version = "0.0.1"
