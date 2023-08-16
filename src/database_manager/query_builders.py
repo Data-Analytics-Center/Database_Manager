@@ -5,7 +5,7 @@ from sqlalchemy import engine
 
 
 def simple_select(
-    conn: engine,
+    engine: engine,
     database: str = None,
     table: str = None,
     top: int = None,
@@ -17,7 +17,7 @@ def simple_select(
     """Selects data from a table.
 
     Args:
-        conn (engine): Connection object.
+        engine (engine): engine object.
         table (str, optional): Table to select from. Defaults to None.
         top (int, optional): Number of rows to select. Defaults to None, selecting all rows.
         cols (list, optional): List of columns to select. Defaults to ["*"].
@@ -51,7 +51,7 @@ def simple_select(
     if top is not None:
         query += f" LIMIT {top}"
 
-    execute_query(conn, query)
+    execute_query(engine, query)
 
 def simple_insert(
     engine: engine, database: str, table: str, columns: list, *args

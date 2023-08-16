@@ -1,4 +1,1 @@
-# Queries
-
-This page contains all the different functions that cane be used for interacting with our database API!
-
+::: src.database_manager.query_builders
