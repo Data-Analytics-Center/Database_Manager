@@ -20,7 +20,6 @@ To update the package run the following:
 ## Usage
 
 View the API in depth by running the following commands:
-
 - `pipenv install`
 - `pipenv shell` or activate your enviroment
 - `mkdocs serve`
@@ -32,6 +31,7 @@ To get started with development clone this repository.
 Then run `pipenv install` to generate the required packages in the `.venv` directory
 The package code is in `/src/database-manager`
 To learn more about the code run the following:
+
 - `pipenv shell` or activate your enviroment
 - `mkdocs serve`
 - go to `localhost:8000`

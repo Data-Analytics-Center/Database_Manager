@@ -1,7 +1,8 @@
+"""Defines all the query builders for all database operations."""
+
 from .connection_manager import create_connection, execute_query
 from sqlalchemy import engine
 
-"""Defines all the query builders for all database operations."""
 
 def simple_select(
     conn: engine,
