@@ -16,3 +16,5 @@ def execute_query(conn, sql, values=None):
     # Brandon TODO: need to update properly
     conn.execute(text(sql))
     conn.close()
+
+    conn.commit()

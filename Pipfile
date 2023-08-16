@@ -5,12 +5,13 @@ name = "pypi"
 
 [packages]
 sqlalchemy = "*"
-mkdocstrings-python = "*"
+pytest = "*"
 
 [dev-packages]
 mkdocstrings = "*"
 mkdocs = "*"
 mkdocs-material = "*"
+mkdocstrings-python = "*"
 
 [requires]
-python_version = "3.10"
+python_version = "*"
