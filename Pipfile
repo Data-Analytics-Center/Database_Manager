@@ -7,6 +7,9 @@ name = "pypi"
 sqlalchemy = "*"
 wheel = "*"
 pytest = "*"
+python-dotenv = "*"
+pyodbc = "*"
+pandas = "*"
 
 [dev-packages]
 mkdocstrings-python = "*"

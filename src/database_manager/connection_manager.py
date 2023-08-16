@@ -1,10 +1,12 @@
 """Contains database connection and execution logic."""
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine as sqlalchemy_create_engine
 from sqlalchemy import engine
 
 
-def create_connection(server: str, database: list, driver: str) -> engine:
+def create_engine(
+    server: str, database: list, driver: str, bulk_insert: bool  # noqa: FBT001
+) -> engine:
     """Create a connection object to a database.
 
     This function creates a SQLAlchemy engine connection object to a database.
@@ -15,6 +17,7 @@ def create_connection(server: str, database: list, driver: str) -> engine:
         driver: The driver that connects to the database.
         server: The name of the database server.
         database: The database to connect to.
+        bulk_insert: True if engine is for bulk inserts only
 
     Returns:
         Connection: A SQLAlchemy engine connection object.
@@ -40,8 +43,14 @@ def create_connection(server: str, database: list, driver: str) -> engine:
     if server is None or server == "":
         raise ValueError("Server cannot be empty.")
 
-    connection_string = f"mssql://@{server}/{database}?driver={driver}&Encrypt=no"
-    engine = create_engine(connection_string)
+    connection_string = (
+        f"mssql+pyodbc://@{server}/{database}?driver={driver}&Encrypt=no"
+    )
+    engine = (
+        sqlalchemy_create_engine(connection_string, fast_executemany=True)
+        if bulk_insert
+        else sqlalchemy_create_engine(connection_string)
+    )
     return engine
 
 
