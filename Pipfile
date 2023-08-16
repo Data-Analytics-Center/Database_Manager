@@ -13,7 +13,7 @@ mkdocstrings-python = "*"
 mkdocstrings = "*"
 mkdocs = "*"
 mkdocs-material = "*"
-mkdocstrings-python = "*"
+
 
 [requires]
 python_version = "*"
