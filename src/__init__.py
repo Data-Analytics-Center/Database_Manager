@@ -1,1 +1,1 @@
-from .database_manager import *
+from .database_manager import select
