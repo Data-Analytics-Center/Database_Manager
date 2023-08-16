@@ -7,13 +7,15 @@ name = "pypi"
 sqlalchemy = "*"
 wheel = "*"
 pytest = "*"
+python-dotenv = "*"
+pyodbc = "*"
+pandas = "*"
 
 [dev-packages]
 mkdocstrings-python = "*"
 mkdocstrings = "*"
 mkdocs = "*"
 mkdocs-material = "*"
-mkdocstrings-python = "*"
 
 [requires]
 python_version = "*"
