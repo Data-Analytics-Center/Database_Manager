@@ -1,8 +1,9 @@
 """Defines all the query builders for all database operations."""
 
-from .connection_manager import create_connection, execute
+from .connection_manager import create_connection, execute_query
 
-def select(
+
+def simple_select(
     database: str = None,
     table: str = None,
     top: int = None,
@@ -20,19 +21,25 @@ def select(
         where (str, optional): Where clause. Defaults to None.
         group_by (str, optional): Group by clause. Defaults to None.
         order_by (str, optional): Order by clause. Defaults to None.
+
+    Raises:
+        ValueError: If database name is not provided.
+
+    Returns:
+        None
     """
     if database is None:
-        raise Exception("Database name is required.")
+        raise ValueError("Database name is required.")
 
     try:
         conn = create_connection(database)
-    except Exception as e:
-        raise Exception(f"Error creating connection to database: {e}")
+    except ValueError as e:
+        print(f"Error creating connection to database: {e}")
 
     if table is None:
         raise Exception("Table name is required.")
 
-    query = f"SELECT {', '.join(cols)} FROM {table}"
+    query = f"""SELECT {", ".join(cols)} FROM {table}"""
 
     if where is not None:
         query += f" WHERE {where}"
@@ -46,4 +53,4 @@ def select(
     if top is not None:
         query += f" LIMIT {top}"
 
-    execute(conn, query)
+    execute_query(conn, query)
