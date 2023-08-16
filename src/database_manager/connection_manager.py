@@ -1,10 +1,10 @@
 """Contains database connection and execution logic."""
 
-from sqlalchemy import create_engine, text
-from sqlalchemy.engine.base import Connection
+from sqlalchemy import create_engine
+from sqlalchemy import engine
 
 
-def create_connection(server: str, database: str, driver: str) -> Connection:
+def create_connection(server: str, database: list, driver: str) -> engine:
     """Create a connection object to a database.
 
     This function creates a SQLAlchemy engine connection object to a database.
@@ -42,29 +42,31 @@ def create_connection(server: str, database: str, driver: str) -> Connection:
 
     connection_string = f"mssql://@{server}/{database}?driver={driver}&Encrypt=no"
     engine = create_engine(connection_string)
-    return engine.begin()
+    return engine
 
 
-def execute_query(
-    connection: Connection, query: str, values: tuple[any, ...] = None
-) -> None:
+def execute_query(engine: engine, query: str, values: tuple[any, ...] = None) -> None:
     """Execute an SQL query.
 
     Arguments:
-        connection: The connnection object to the database.
+        engine: The engine object to connect to the database.
         query: The query to execute.
         values: The values to pass to the query if any.
 
+    Returns:
+        last_id: The id of the last row inserted.
+
     Raises:
         Exception: If anything goes wrong with the database transaction.
+        ValueError: If the engine or query is not set.
     """
-    try:
-        if values is not None:
-            connection.execute(text(query), **values)
+    if engine is None:
+        raise ValueError("Engine cannot be None.")
+    if query is None or query == "":
+        raise ValueError("Query cannot be None or empty.")
+
+    with engine.begin() as connection:
+        if values:
+            connection.execute(query, values)
         else:
-            connection.execute(text(query))
-    except Exception as e:
-        print(e)
-        raise e
-    finally:
-        connection.close()
+            connection.execute(query)
