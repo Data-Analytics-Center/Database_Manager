@@ -1,93 +1,73 @@
-"""Defines all the query builders for all database operations."""
-
-from .connection_manager import create_connection, execute_query
-from sqlalchemy import engine
+from .connection_manager import create_connection
+from sqlalchemy import engine, text
 
 
-def simple_select(
-    conn: engine,
-    database: str = None,
-    table: str = None,
-    top: int = None,
-    cols: list = ["*"],
-    where: str = None,
-    group_by: str = None,
-    order_by: str = None,
-) -> None:
-    """Selects data from a table.
+def batch_insert(engine, database, table, columns, args, values_list):
+    """
+    Insert multiple rows into a specified table in batches.
 
     Args:
-        conn (engine): Connection object.
-        table (str, optional): Table to select from. Defaults to None.
-        top (int, optional): Number of rows to select. Defaults to None, selecting all rows.
-        cols (list, optional): List of columns to select. Defaults to ["*"].
-        where (str, optional): Where clause. Defaults to None.
-        group_by (str, optional): Group by clause. Defaults to None.
-        order_by (str, optional): Order by clause. Defaults to None.
+    engine: Database engine or connection object.
+    database (str): The name of the database to connect to.
+    table (str): The name of the table where the insertion will be performed.
+    columns (list): List of column names in the table.
+    args (list): List of argument names corresponding to columns in the table.
+    values_list (list of tuples): List of tuples, each containing values to be inserted into corresponding columns.
 
     Raises:
-        ValueError: If database name is not provided.
-
-    Returns:
-        None
+    ValueError: If the database name, table name, columns list, args list, or values_list is not provided,
+                or if the number of args does not match the number of columns in the table.
     """
-    if database is None:
-        raise ValueError("Database name is required.")
-
-    if table is None:
-        raise Exception("Table name is required.")
-
-    query = f"""SELECT {", ".join(cols)} FROM {table}"""
-
-    if where is not None:
-        query += f" WHERE {where}"
-
-    if group_by is not None:
-        query += f" GROUP BY {group_by}"
-
-    if order_by is not None:
-        query += f" ORDER BY {order_by}"
-
-    if top is not None:
-        query += f" LIMIT {top}"
-
-    execute_query(conn, query)
-
-def simple_insert(
-    engine: engine, database: str, table: str, columns: list, *args
-) -> None:
-    """
-    Insert a single row into a specified table.
-
-    Args:
-        database (str): The name of the database to connect to.
-        table (str): The name of the table where the insertion will be performed.
-        columns (list): List of column names in the table.
-        *args: Values to be inserted into corresponding columns.
-
-    Raises:
-        ValueError: If the database name, table name, or columns list is not provided,
-            or if the number of columns does not match the number of arguments provided.
-    """
-
     if not database:
         raise ValueError("The database name is not provided!")
     if not table:
         raise ValueError("The table name is not provided!")
     if not columns:
-        raise ValueError("At least one column is required!")
-    if len(columns) != len(args):
+        raise ValueError("At least one column name is required!")
+    if not args:
+        raise ValueError("At least one argument name is required!")
+    if len(args) != len(columns):
         raise ValueError(
-            f"Number of columns does not match the number of args provided!"
+            "Number of args should match the number of columns in the table!"
         )
 
-    conn = create_connection(engine, database)
+    columns_string = ", ".join(columns)
+    placeholders = ", ".join(
+        ["(" + ", ".join(["%s"] * len(args)) + ")"] * len(values_list)
+    )
+    query = f"INSERT INTO {table} ({columns_string}) VALUES {placeholders}"
+
+    conn = create_connection(database)
     if not conn:
         raise Exception(f"The connection was not formed with this database: {database}")
 
-    column_string = ", ".join(columns)
-    placeholders = ", ".join(["?" for _ in args])
-    query = f"""INSERT INTO {table} ({column_string}) VALUES ({placeholders});"""
+    try:
+        with conn.cursor() as cursor:
+            cursor.executemany(query, values_list)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        conn.close()
 
-    conn.execute(query)
-    conn.commit()
+    columns_string = ", ".join(columns)
+    placeholders = ", ".join(
+        ["(" + ", ".join(["%s"] * len(args)) + ")"] * len(values_list)
+    )
+    query = f"INSERT INTO {table} ({columns_string}) VALUES {placeholders}"
+
+    conn = create_connection(database)
+    if not conn:
+        raise Exception(f"The connection was not formed with this database: {database}")
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.executemany(query, values_list)
+        conn.commit()
+
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        conn.close()
