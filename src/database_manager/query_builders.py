@@ -4,7 +4,20 @@ from .connection_manager import create_connection
 
 
 def simple_insert(database: str, table: str, columns: list, *args) -> None:
-    """Insert a single row into a table"""
+    """
+    Insert a single row into a specified table.
+
+    Args:
+        database (str): The name of the database to connect to.
+        table (str): The name of the table where the insertion will be performed.
+        columns (list): List of column names in the table.
+        *args: Values to be inserted into corresponding columns.
+
+    Raises:
+        ValueError: If the database name, table name, or columns list is not provided,
+            or if the number of columns does not match the number of arguments provided.
+    """
+
     if not database:
         raise ValueError("The database name is not provided!")
     if not table:
