@@ -1,9 +1,11 @@
 """Defines all the query builders for all database operations."""
 
-from .connection_manager import create_connection, execute_query
+from .connection_manager import execute_query
+from sqlalchemy import engine
 
 
 def simple_select(
+    conn: engine,
     database: str = None,
     table: str = None,
     top: int = None,
@@ -15,6 +17,7 @@ def simple_select(
     """Selects data from a table.
 
     Args:
+        conn (engine): Connection object.
         table (str, optional): Table to select from. Defaults to None.
         top (int, optional): Number of rows to select. Defaults to None, selecting all rows.
         cols (list, optional): List of columns to select. Defaults to ["*"].
@@ -30,11 +33,6 @@ def simple_select(
     """
     if database is None:
         raise ValueError("Database name is required.")
-
-    try:
-        conn = create_connection(database)
-    except ValueError as e:
-        print(f"Error creating connection to database: {e}")
 
     if table is None:
         raise Exception("Table name is required.")
