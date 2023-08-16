@@ -1,9 +1,12 @@
 from .connection_manager import create_connection
+from sqlalchemy import engine
 
 """Defines all the query builders for all database operations."""
 
 
-def simple_insert(database: str, table: str, columns: list, *args) -> None:
+def simple_insert(
+    engine: engine, database: str, table: str, columns: list, *args
+) -> None:
     """
     Insert a single row into a specified table.
 
@@ -29,7 +32,7 @@ def simple_insert(database: str, table: str, columns: list, *args) -> None:
             f"Number of columns does not match the number of args provided!"
         )
 
-    conn = create_connection(database)
+    conn = create_connection(engine, database)
     if not conn:
         raise Exception(f"The connection was not formed with this database: {database}")
 
