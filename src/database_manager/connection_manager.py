@@ -1,15 +1,15 @@
 """Contains database connection and execution logic."""
 
 from sqlalchemy import create_engine as sqlalchemy_create_engine
-from sqlalchemy import engine
+from sqlalchemy import Engine
 
 
 def create_engine(
     server: str, database: list, driver: str, bulk_insert: bool  # noqa: FBT001
-) -> engine:
+) -> Engine:
     """Create a connection object to a database.
 
-    This function creates a SQLAlchemy engine connection object to a database.
+    This function creates a SQLAlchemy Engine connection object to a database.
     It relies on environment variables for the connection parameters,
     including the driver, server, database, and environment type.
 
@@ -17,10 +17,10 @@ def create_engine(
         driver: The driver that connects to the database.
         server: The name of the database server.
         database: The database to connect to.
-        bulk_insert: True if engine is for bulk inserts only
+        bulk_insert: True if Engine is for bulk inserts only
 
     Returns:
-        Connection: A SQLAlchemy engine connection object.
+        Connection: A SQLAlchemy Engine connection object.
 
     Raises:
         ValueError: If any of the parameters are empty or not set.
@@ -54,11 +54,11 @@ def create_engine(
     return engine
 
 
-def execute_query(engine: engine, query: str, values: tuple[any, ...] = None) -> None:
+def execute_query(engine: Engine, query: str, values: tuple[any, ...] = None) -> None:
     """Execute an SQL query.
 
     Arguments:
-        engine: The engine object to connect to the database.
+        engine: The Engine object to connect to the database.
         query: The query to execute.
         values: The values to pass to the query if any.
 
@@ -67,7 +67,7 @@ def execute_query(engine: engine, query: str, values: tuple[any, ...] = None) ->
 
     Raises:
         Exception: If anything goes wrong with the database transaction.
-        ValueError: If the engine or query is not set.
+        ValueError: If the Engine or query is not set.
     """
     if engine is None:
         raise ValueError("Engine cannot be None.")

@@ -1,69 +1,63 @@
 """Defines all the query builders for all database operations."""
 
 from .connection_manager import execute_query
-from sqlalchemy import engine, text
+from sqlalchemy import Engine, text
+
+# from sqlalchemy.engine.result import ResultProxy
+
+
+# TODO: is_instance() - engine type (find best way to do this)
+def validate_engine(engine: Engine) -> None:
+    if engine is None:
+        raise ValueError("Engine is None")
+    if not isinstance(engine, Engine):
+        raise ValueError("Engine is not of type engine")
+
+
+# TODO: not none, not empty, not whitespace
+def validate_sql(sql: str) -> None:
+    if sql is None:
+        raise ValueError("SQL is None")
+    if sql == "":
+        raise ValueError("SQL is empty")
+    if sql.isspace():
+        raise ValueError("SQL is whitespace")
 
 
 # TODO: add return type - figure it out
-def execute_raw_select(engine: engine, sql: str) -> None:
+def execute_raw_select(engine: Engine, sql: str) -> str:
     """Execute a SQL select operation using SQLAlchemy.
 
     Arguments:
         engine: Engine object.
-        table (str, optional): Table to select from. Defaults to None.
-        top (int, optional): Number of rows to select. Defaults to None, selecting all rows.
-        cols (list, optional): List of columns to select. Defaults to ["*"].
-        where (str, optional): Where clause. Defaults to None.
-        group_by (str, optional): Group by clause. Defaults to None.
-        order_by (str, optional): Order by clause. Defaults to None.
-
-    Raises:
-        ValueError: If database name is not provided.
+        sql (str): SQL query to execute.
 
     Returns:
-        A Pyodbc cursor object.
+        Results of the query.
     """
-    if table is None:
-        raise Exception("Table name is required.")
+    try:
+        vaildate_engine(engine)
+    except ValueError as e:
+        print(e)
 
-    query = f"""SELECT {", ".join(cols)} FROM {table}"""
-
-    if top is not None:
-        query += f" TOP={top}"
-
-    if where is not None:
-        query += f" WHERE {where}"
+    try:
+        validate_sql(sql)
+    except ValueError as e:
+        print(e)
 
     with engine.begin() as connection:
-        results = connection.execute(text(query))
+        results = connection.execute(text(sql))
     return results
 
 
 # TODO add pandas dataframe return type
 def execute_pandas_select(
-    engine: engine,
+    engine: Engine,
     table: str,
     top: int = None,
     cols: list = ["*"],
     where: str = None,
 ) -> None:
-    """Select data from a table using pandas.
-
-    Arguments:
-        engine: Engine object.
-        table (str, optional): Table to select from. Defaults to None.
-        top (int, optional): Number of rows to select. Defaults to None, selecting all rows.
-        cols (list, optional): List of columns to select. Defaults to ["*"].
-        where (str, optional): Where clause. Defaults to None.
-        group_by (str, optional): Group by clause. Defaults to None.
-        order_by (str, optional): Order by clause. Defaults to None.
-
-    Raises:
-        ValueError: If database name is not provided.
-
-    Returns:
-        A pandas dataframe.
-    """
     if table is None:
         raise ValueError("Table name parameter is None")
 
@@ -81,7 +75,7 @@ def execute_pandas_select(
     return results
 
 
-def single_insert(engine: engine, table: str, columns: list, *values) -> None:
+def single_insert(engine: Engine, table: str, columns: list, *values) -> None:
     """Insert a single row into a specified table.
 
     Arguments:
