@@ -1,8 +1,5 @@
 """Test the select function."""
 
-from ..connection_manager import create_engine
-from ..queries import select
-
 
 def valid_select_test():
     pass

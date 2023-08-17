@@ -37,11 +37,11 @@ def create_engine(
         ```
     """
     if database is None or database == "":
-        raise ValueError("Database name cannot be empty.")
+        raise ValueError("Database parameter cannot be None or empty.")
     if driver is None or driver == "":
-        raise ValueError("Driver cannot be empty.")
+        raise ValueError("Driver parameter cannot be None or empty.")
     if server is None or server == "":
-        raise ValueError("Server cannot be empty.")
+        raise ValueError("Server parameter cannot be None or empty.")
 
     connection_string = (
         f"mssql+pyodbc://@{server}/{database}?driver={driver}&Encrypt=no"

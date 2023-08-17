@@ -5,7 +5,13 @@ from sqlalchemy import engine, text
 
 
 # TODO: add return type - figure it out
-def execute_raw_select(engine: engine, sql: str) -> None:
+def execute_raw_select(
+    engine: engine,
+    table: str,
+    top: int = None,
+    cols: list = ["*"],
+    where: str = None,
+) -> None:
     """Execute a SQL select operation using SQLAlchemy.
 
     Arguments:
@@ -79,6 +85,14 @@ def execute_pandas_select(
     with engine.begin() as connection:
         results = connection.execute(text(query))
     return results
+
+
+def bulk_pandas_insert():
+    pass
+
+
+def bulk_raw_insert():
+    pass
 
 
 def single_insert(engine: engine, table: str, columns: list, *values) -> None:
