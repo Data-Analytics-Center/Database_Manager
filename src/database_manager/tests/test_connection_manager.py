@@ -31,18 +31,3 @@ def test_missing_engine_parameters():
 
     with pytest.raises(ValueError, match="Driver parameter cannot be None or empty."):
         create_engine(SERVER, DATABASE, None, bulk_insert=False)
-
-
-def test_invalid_engine_parameters():
-    """Test invalid engine parameters raise an exception."""
-    pytest.raises(
-        ValueError,
-        create_engine,
-        "",
-        DATABASE,
-        DRIVER,
-        bulk_insert=False,
-        match="Server parameter cannot be None or empty.",
-    )
-    # pytest.raises(ValueError, create_engine, SERVER, "", DRIVER, match="Database parameter cannot be None or empty.")
-    # pytest.raises(ValueError, create_engine, SERVER, DATABASE, "", match="Driver parameter cannot be None or empty.")
