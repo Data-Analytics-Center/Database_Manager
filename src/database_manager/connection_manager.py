@@ -54,28 +54,28 @@ def create_engine(
     return engine
 
 
-def execute_query(engine: Engine, query: str, values: tuple[any, ...] = None) -> None:
-    """Execute an SQL query.
+# def execute_query(engine: Engine, query: str, values: tuple[any, ...] = None) -> None:
+#     """Execute an SQL query.
 
-    Arguments:
-        engine: The Engine object to connect to the database.
-        query: The query to execute.
-        values: The values to pass to the query if any.
+#     Arguments:
+#         engine: The Engine object to connect to the database.
+#         query: The query to execute.
+#         values: The values to pass to the query if any.
 
-    Returns:
-        last_id: The id of the last row inserted.
+#     Returns:
+#         last_id: The id of the last row inserted.
 
-    Raises:
-        Exception: If anything goes wrong with the database transaction.
-        ValueError: If the Engine or query is not set.
-    """
-    if engine is None:
-        raise ValueError("Engine cannot be None.")
-    if query is None or query == "":
-        raise ValueError("Query cannot be None or empty.")
+#     Raises:
+#         Exception: If anything goes wrong with the database transaction.
+#         ValueError: If the Engine or query is not set.
+#     """
+#     if engine is None:
+#         raise ValueError("Engine cannot be None.")
+#     if query is None or query == "":
+#         raise ValueError("Query cannot be None or empty.")
 
-    with engine.begin() as connection:
-        if values:
-            connection.execute(query, values)
-        else:
-            connection.execute(query)
+#     with engine.begin() as connection:
+#         if values:
+#             connection.execute(query, values)
+#         else:
+#             connection.execute(query)
