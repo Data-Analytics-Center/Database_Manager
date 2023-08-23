@@ -20,7 +20,7 @@ def test_sql_query():
     engine = create_engine(server, database, driver, False)
     sql = build_select_query(table, 10, ["filepath", "id"])
     result: CursorResult = execute_raw_select(engine, sql)
-    rows = result.fetchall()
+    rows = result
 
     for row in rows:
         print(row)

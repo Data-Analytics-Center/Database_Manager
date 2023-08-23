@@ -3,6 +3,7 @@
 from sqlalchemy import CursorResult, Engine, text
 from sqlalchemy.orm import sessionmaker
 import pandas as pd
+from .connection_manager import create_engine, create_bulk_engine
 
 
 def validate_engine(engine: Engine) -> None:
@@ -21,6 +22,8 @@ def validate_sql(sql: str) -> None:
         raise ValueError("SQL is whitespace")
 
 
+# TODO: Log the error instead of printing it.
+# TODO: Create engine
 def execute_raw_select(engine: Engine, sql: str) -> CursorResult:
     """Execute a SQL select operation using SQLAlchemy.
 
@@ -42,15 +45,12 @@ def execute_raw_select(engine: Engine, sql: str) -> CursorResult:
         print(e)
 
     Session = sessionmaker(bind=engine)
-    session = Session()
-
-    results = session.execute(text(sql))
+    with Session() as session:
+        results = session.execute(text(sql)).fetchall()
     return results
-    # with engine.begin() as connection:
-    #     results = connection.execute(text(sql))
-    # return results
 
 
+# TODO: Log the error instead of printing it.
 def execute_pandas_select(
     engine: Engine,
     sql: str,
