@@ -78,6 +78,14 @@ def execute_pandas_select(
     return df
 
 
+def bulk_pandas_insert():
+    pass
+
+
+def bulk_raw_insert():
+    pass
+
+
 def single_insert(engine: Engine, table: str, columns: list, *values) -> None:
     """Insert a single row into a specified table.
 
