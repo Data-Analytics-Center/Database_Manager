@@ -3,7 +3,7 @@
 from sqlalchemy import CursorResult
 from src.database_manager.connection_manager import create_engine
 from src.database_manager.execute_query import execute_raw_select, execute_pandas_select
-from src.database_manager.query_builders import build_select_query
+from src.database_manager.query_builders import build_select_query, build_insert_query
 from dotenv import load_dotenv
 import os
 
@@ -33,5 +33,13 @@ def pandas_Print():
     print(result)
 
 
-test_sql_query()
+def insert_query():
+    sql = build_insert_query(table, ["filename", "id"], "test", 1)
+    print(sql)
+
+
+insert_query()
+
+
+# test_sql_query()
 # pandas_Print()
