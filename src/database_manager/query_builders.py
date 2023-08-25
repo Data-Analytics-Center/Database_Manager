@@ -45,5 +45,34 @@ def build_select_query(
     return sql_query
 
 
-def build_insert_query(table: str, columns: list, *values) -> str:
-    pass
+def build_insert_query(table: str, cols: list, *values) -> str:
+    """Build an insert query.
+
+    Arguments:
+        table (str): Table to insert into.
+        cols (list): List of columns to insert into.
+        values (list): Values to insert into corresponding columns.
+
+    Raises:
+        Exception: If table name is not provided.
+        Exception: If columns list is not provided.
+        Exception: If number of columns does not match the number of arguments provided.
+
+    Returns:
+        An insert query.
+    """
+
+    if not table:
+        raise ValueError("Table name is required.")
+
+    if not cols:
+        raise ValueError("At least one column is required!")
+
+    if len(cols) != len(values):
+        raise ValueError(
+            "Number of columns does not match the number of args provided!"
+        )
+
+    sql_query = f"""INSERT INTO {table} ({", ".join(cols)}) VALUES ({', '.join([str(val) for val in values])})"""
+
+    return sql_query
