@@ -48,7 +48,7 @@ def create_engine(server: str, database: list, driver: str) -> Engine:  # noqa: 
     return engine
 
 
-def create_bulk_engine(server: str, database: list, driver: str):
+def create_bulk_insert_engine(server: str, database: list, driver: str):
     """Create a connection object to a database.
 
     This function creates a SQLAlchemy Engine connection object to a database.

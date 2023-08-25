@@ -43,3 +43,7 @@ def build_select_query(
         query += f" ORDER BY {order_by}"
 
     return sql_query
+
+
+def build_insert_query(table: str, columns: list, *values) -> str:
+    pass
