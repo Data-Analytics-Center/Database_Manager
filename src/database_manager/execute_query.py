@@ -3,27 +3,21 @@
 from sqlalchemy import CursorResult, Engine, text
 from sqlalchemy.orm import sessionmaker
 import pandas as pd
-from .connection_manager import create_engine, create_bulk_insert_engine
-from enum import Enum
-from dotenv import load_dotenv
-import os
+from .connection_manager import create_engine, InsertType
 
-load_dotenv()
-
-server = os.getenv("SERVER")
-database = os.getenv("DATABASE")
-driver = os.getenv("DRIVER")
-table = os.getenv("TABLE")
-
-
-class Insert_Engine(Enum):
-    """Enum to define the type of engine to create."""
-
-    BULK_INSERT = 1
-    SINGLE_INSERT = 2
+""" TODO:
+    - Add logging
+    - add docstrings
+    - test
+"""
 
 
 def validate_engine(engine: Engine) -> None:
+    """Validate an engine object was initialized properly.
+
+    Arguments:
+        engine (Engine): Engine object to validate.
+    """
     if engine is None:
         raise ValueError("Engine is None")
     if not isinstance(engine, Engine):
@@ -31,6 +25,11 @@ def validate_engine(engine: Engine) -> None:
 
 
 def validate_sql(sql: str) -> None:
+    """Validate a SQL query is not garbage.
+
+    Arguments:
+        sql (str): SQL query to validate.
+    """
     if sql is None:
         raise ValueError("SQL is None")
     if sql == "":
@@ -39,61 +38,52 @@ def validate_sql(sql: str) -> None:
         raise ValueError("SQL is whitespace")
 
 
-# TODO: Log the error instead of printing it.
-# TODO: Create engine
 def execute_raw_select(sql: str) -> CursorResult:
-    """Creates and engine and executes a SQL select operation using SQLAlchemy.
+    """Create and engine and executes a SQL select operation using SQLAlchemy.
 
     Arguments:
         sql (str): SQL query to execute.
 
     Returns:
-        Results of the query.
+        CursorResult: Results of the query.
     """
-    engine = create_engine(server, database, driver)
+    engine = create_engine()
 
     validate_engine(engine)
     validate_sql(sql)
 
-    Session = sessionmaker(bind=engine)
-    with Session() as session:
+    session_initializer = sessionmaker(bind=engine)
+    with session_initializer() as session:
         results = session.execute(text(sql)).fetchall()
     return results
 
 
-# TODO: Log the error instead of printing it.
 def execute_pandas_select(
     sql: str,
 ) -> pd.DataFrame:
-    """Creates an engine and executes a SQL select operation using SQLAlchemy.
+    """Create an engine and executes a SQL select operation using SQLAlchemy.
 
     Arguments:
         sql (str): SQL query to execute.
 
     Returns:
-        Results of the query as a pandas DataFrame.
+        DataFrame: Results of the query.
     """
-    engine = create_engine(server, database, driver)
+    engine = create_engine()
 
     validate_engine(engine)
     validate_sql(sql)
 
-    df = pd.read_sql(sql, engine)
-    return df
+    dataframe = pd.read_sql(sql, engine)
+    return dataframe
 
 
-def raw_insert(columns: list, *values, bulk=Insert_Engine.BULK_INSERT):
-    if bulk == Insert_Engine.BULK_INSERT:
-        engine = create_bulk_insert_engine(server, database, driver)
-    elif bulk == Insert_Engine.SINGLE_INSERT:
-        engine = create_engine(server, database, driver)
-    else:
-        raise ValueError("Invalid bulk insert type")
-
+def execute_raw_insert(
+    columns: list, *values, insert_type: InsertType = InsertType.BULK_INSERT
+):
+    engine = create_engine(insert_type)
     validate_engine(engine)
 
-    if not table:
-        raise ValueError("The table name is not provided!")
     if not columns:
         raise ValueError("At least one column is required!")
     if len(columns) != len(values):
@@ -102,7 +92,7 @@ def raw_insert(columns: list, *values, bulk=Insert_Engine.BULK_INSERT):
         )
 
 
-def pandas_insert(table: str, columns: list, *values, bulk=Insert_Engine.BULK_INSERT):
+def pandas_insert(table: str, columns: list, *values, bulk=InsertType.BULK_INSERT):
     pass
 
 

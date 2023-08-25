@@ -1,10 +1,21 @@
-"""Contains database connection and execution logic."""
+"""Contains database connection logic."""
 
+from enum import Enum
+import os
+
+from dotenv import load_dotenv
 from sqlalchemy import create_engine as sqlalchemy_create_engine
 from sqlalchemy import Engine
 
 
-def create_engine(server: str, database: list, driver: str) -> Engine:  # noqa: FBT001
+class InsertType(Enum):
+    """Enum to define the type of engine to create."""
+
+    BULK_INSERT = 1
+    SINGLE_INSERT = 2
+
+
+def create_engine(insert_type: InsertType = None) -> Engine:  # noqa: FBT001
     """Create a connection object to a database.
 
     This function creates a SQLAlchemy Engine connection object to a database.
@@ -12,81 +23,43 @@ def create_engine(server: str, database: list, driver: str) -> Engine:  # noqa: 
     including the driver, server, database, and environment type.
 
     Arguments:
-        driver: The driver that connects to the database.
-        server: The name of the database server.
-        database: The database to connect to.
-        bulk_insert: True if Engine is for bulk inserts only
+        insert_type: True if Engine is for bulk inserts only
+
+    Environment Variables:
+        driver (str): The driver that connects to the database.
+        server (str): The name of the database server.
+        database (str): The database to connect to.
 
     Returns:
-        Connection: A SQLAlchemy Engine connection object.
+        Engine: A SQLAlchemy Engine object.
 
     Raises:
-        ValueError: If any of the parameters are empty or not set.
+        ValueError: If any of the environment variables are not set properly.
 
     Example:
         To use this function, set the environment variables and then call `create_connection()`:
         ```python
-        import os
-        os.environ['DATABASE'] = 'my_database'
-        os.environ['development_DRIVER'] = 'ODBC Driver 17 for SQL Server'
-        os.environ['development_SERVER'] = 'my_server_address'
-
-        connection = create_connection(server, database, driver)
+        engine = create_engine()
         ```
     """
-    if database is None or database == "":
-        raise ValueError("Database parameter cannot be None or empty.")
-    if driver is None or driver == "":
-        raise ValueError("Driver parameter cannot be None or empty.")
-    if server is None or server == "":
-        raise ValueError("Server parameter cannot be None or empty.")
+    load_dotenv()
+
+    server = os.getenv("SERVER")
+    database = os.getenv("DATABASE")
+    driver = os.getenv("DRIVER")
+
+    if database is None or database == "" or database.isspace():
+        raise ValueError("Database environment variable is not properly set.")
+    if driver is None or driver == "" or driver.isspace():
+        raise ValueError("Driver environment variable is not properly set.")
+    if server is None or server == "" or server.isspace():
+        raise ValueError("Server environment variable is not properly set.")
 
     connection_string = (
         f"mssql+pyodbc://@{server}/{database}?driver={driver}&Encrypt=no"
     )
-    engine = sqlalchemy_create_engine(connection_string)
-    return engine
-
-
-def create_bulk_insert_engine(server: str, database: list, driver: str):
-    """Create a connection object to a database.
-
-    This function creates a SQLAlchemy Engine connection object to a database.
-    It relies on environment variables for the connection parameters,
-    including the driver, server, database, and environment type.
-
-    Arguments:
-        driver: The driver that connects to the database.
-        server: The name of the database server.
-        database: The database to connect to.
-        bulk_insert: True if Engine is for bulk inserts only
-
-    Returns:
-        Connection: A SQLAlchemy Engine connection object.
-
-    Raises:
-        ValueError: If any of the parameters are empty or not set.
-
-    Example:
-        To use this function, set the environment variables and then call `create_connection()`:
-        ```python
-        import os
-        os.environ['DATABASE'] = 'my_database'
-        os.environ['development_DRIVER'] = 'ODBC Driver 17 for SQL Server'
-        os.environ['development_SERVER'] = 'my_server_address'
-
-        connection = create_connection(server, database, driver)
-        ```
-    """
-    if database is None or database == "":
-        raise ValueError("Database name cannot be empty.")
-    if driver is None or driver == "":
-        raise ValueError("Driver cannot be empty.")
-    if server is None or server == "":
-        raise ValueError("Server cannot be empty.")
-
-    connection_string = (
-        f"mssql+pyodbc://@{server}/{database}?driver={driver}&Encrypt=no"
-    )
-    engine = sqlalchemy_create_engine(connection_string, fast_executemany=True)
+    if insert_type == InsertType.BULK_INSERT:
+        engine = sqlalchemy_create_engine(connection_string, fast_executemany=True)
+    else:
+        engine = sqlalchemy_create_engine(connection_string)
     return engine
