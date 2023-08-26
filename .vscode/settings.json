@@ -1,6 +1,6 @@
 {
     "python.testing.pytestArgs": [
-        "src"
+        "src/database_manager/tests"
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true

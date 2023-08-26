@@ -21,7 +21,7 @@ def validate_engine(engine: Engine) -> None:
     if engine is None:
         raise ValueError("Engine is None")
     if not isinstance(engine, Engine):
-        raise ValueError("Engine is not of type engine")
+        raise ValueError("Object passed as engine is not of type Engine")
 
 
 def validate_sql(sql: str) -> None:
