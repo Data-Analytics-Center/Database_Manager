@@ -78,46 +78,36 @@ def execute_pandas_select(
     return dataframe
 
 
-def execute_raw_insert(
-    columns: list, *values, insert_type: InsertType = InsertType.BULK_INSERT
+def execute_raw_insert(sql: str, insert_type: InsertType = InsertType.BULK_INSERT
 ):
+    """Create an engine and executes a SQL insert operation using SQLAlchemy.
+
+    Arguments:
+        sql (str): SQL query to execute.
+        insert_type (InsertType, optional): Type of insert operation to execute. Defaults to InsertType.BULK_INSERT.
+    
+    Raises:
+        ValueError: If insert_type is not of type InsertType.
+    
+    Returns:    
+        None
+    """
     engine = create_engine(insert_type)
     validate_engine(engine)
 
-    if not columns:
-        raise ValueError("At least one column is required!")
-    if len(columns) != len(values):
-        raise ValueError(
-            "Number of columns does not match the number of args provided!"
-        )
 
-
-def pandas_insert(table: str, columns: list, *values, bulk=InsertType.BULK_INSERT):
-    pass
-
-
-def execute_single_insert(engine: Engine, table: str, columns: list, *values) -> None:
-    """Insert a single row into a specified table.
+def execute_pandas_insert(sql: str, insert_type: InsertType = InsertType.BULK_INSERT):
+    """Create an engine and executes a SQL insert operation using SQLAlchemy.
 
     Arguments:
-        engine: Engine object.
-        table: The name of the table where the insertion will be performed.
-        columns: List of column names in the table.
-        values: Values to be inserted into corresponding columns.
-
+        sql (str): SQL query to execute.
+        insert_type (InsertType, optional): Type of insert operation to execute. Defaults to InsertType.BULK_INSERT.
+    
     Raises:
-        ValueError: If the database name, table name, or columns list is not provided,
-            or if the number of columns does not match the number of arguments provided.
-    """
-    if not table:
-        raise ValueError("The table name is not provided!")
-    if not columns:
-        raise ValueError("At least one column is required!")
-    if len(columns) != len(values):
-        raise ValueError(
-            "Number of columns does not match the number of args provided!"
-        )
+        ValueError: If insert_type is not of type InsertType.
 
-    column_string = ", ".join(columns)
-    placeholders = ", ".join(["?" for _ in values])
-    query = f"""INSERT INTO {table} ({column_string}) VALUES ({placeholders});"""
+    Returns:
+        None
+    """
+    engine = create_engine(insert_type)
+    validate_engine(engine)
