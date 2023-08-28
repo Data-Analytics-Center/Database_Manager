@@ -95,12 +95,16 @@ def execute_raw_insert(sql: str, insert_type: InsertType = InsertType.BULK_INSER
     engine = create_engine(insert_type)
     validate_engine(engine)
 
+    session_initializer = sessionmaker(bind=engine)
+    with session_initializer() as session:
+        session.execute(text(sql))
 
-def execute_pandas_insert(sql: str, insert_type: InsertType = InsertType.BULK_INSERT):
+
+def execute_pandas_insert( df: pd.DataFrame, insert_type: InsertType = InsertType.BULK_INSERT):
     """Create an engine and executes a SQL insert operation using SQLAlchemy.
 
     Arguments:
-        sql (str): SQL query to execute.
+        df (DataFrame): DataFrame to insert into the database.
         insert_type (InsertType, optional): Type of insert operation to execute. Defaults to InsertType.BULK_INSERT.
     
     Raises:
@@ -111,3 +115,5 @@ def execute_pandas_insert(sql: str, insert_type: InsertType = InsertType.BULK_IN
     """
     engine = create_engine(insert_type)
     validate_engine(engine)
+
+    df.to_sql("test", engine, if_exists="append", index=False)

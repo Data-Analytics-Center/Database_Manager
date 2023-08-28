@@ -73,6 +73,6 @@ def build_insert_query(table: str, cols: list, *values) -> str:
             "Number of columns does not match the number of args provided!"
         )
 
-    sql_query = f"""INSERT INTO {table} ({", ".join(cols)}) VALUES ({', '.join([str(val) for val in values])})"""
+    sql_query = f"""INSERT INTO {table} ({", ".join(cols)}) VALUES ({', '.join(["?" for val in values])});"""
 
     return sql_query
