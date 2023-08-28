@@ -12,7 +12,7 @@ from .connection_manager import create_engine, InsertType
 """
 MAX_INSERT_LIMIT = 80000
 
-def _validate_engine(engine: Engine) -> None:
+def validate_engine(engine: Engine) -> None:
     """Validate an engine object was initialized properly.
 
     Arguments:
@@ -24,7 +24,7 @@ def _validate_engine(engine: Engine) -> None:
         raise ValueError("Object passed as engine is not of type Engine")
 
 
-def _validate_sql(sql: str) -> None:
+def validate_sql(sql: str) -> None:
     """Validate a SQL query is not garbage.
 
     Arguments:
@@ -49,8 +49,8 @@ def execute_raw_select(sql: str) -> CursorResult:
     """
     engine = create_engine()
 
-    _validate_engine(engine)
-    _validate_sql(sql)
+    validate_engine(engine)
+    validate_sql(sql)
 
     session_initializer = sessionmaker(bind=engine)
     with session_initializer() as session:
@@ -71,8 +71,8 @@ def execute_pandas_select(
     """
     engine = create_engine()
 
-    _validate_engine(engine)
-    _validate_sql(sql)
+    validate_engine(engine)
+    validate_sql(sql)
 
     dataframe = pd.read_sql(sql, engine)
     return dataframe
@@ -93,8 +93,11 @@ def execute_raw_insert(sql: str, insert_type: InsertType = InsertType.BULK_INSER
     Returns:
         None
     """
+    if not isinstance(insert_type, InsertType):
+        raise ValueError("Insert type is not of type InsertType")
+    
     engine = create_engine(insert_type)
-    _validate_engine(engine)
+    validate_engine(engine)
 
     session_initializer = sessionmaker(bind=engine)
     with session_initializer() as session:
@@ -102,26 +105,22 @@ def execute_raw_insert(sql: str, insert_type: InsertType = InsertType.BULK_INSER
         session.commit()
 
 
-def execute_pandas_insert(df: pd.DataFrame):
+def execute_pandas_insert(table: str, df: pd.DataFrame):
     """Create an engine and executes a SQL insert operation using SQLAlchemy.
 
     Arguments:
+        table (str): Table to insert into.
         df (DataFrame): DataFrame to insert into the database.
-        insert_type (InsertType, optional): Type of insert operation to execute. Defaults to InsertType.BULK_INSERT.
-
-    Raises:
-        ValueError: If insert_type is not of type InsertType.
-
 
     Returns:
         None
     """
-    engine = create_engine(InsertType.BULK_INSERT)
-    _validate_engine(engine)
+    engine = create_engine()
+    validate_engine(engine)
 
     if len(df) > MAX_INSERT_LIMIT:
         raise ValueError(
             f"DataFrame has {len(df)} rows, which is greater than the maximum insert limit of {MAX_INSERT_LIMIT}."
         )
 
-    df.to_sql("test", engine, if_exists="append", index=False)
+    df.to_sql(table, engine, if_exists="append", index=False)
