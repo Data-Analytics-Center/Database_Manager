@@ -10,7 +10,7 @@ from sqlalchemy import Engine
 
 class InsertType(Enum):
     """Enum to define the type of engine to create."""
-
+    
     BULK_INSERT = 1
     SINGLE_INSERT = 2
 

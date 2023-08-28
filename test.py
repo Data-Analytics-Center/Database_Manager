@@ -25,25 +25,26 @@ def test_raw_select():
         print(row)
 
 def test_pandas_select():
-    sql = build_select_query(table_name, 10, ["filename", "id"])
+    sql = build_select_query(table_name,cols=["filename", "id"])
     result = execute_pandas_select(sql)
     print(result)
 
 def test_raw_insert():
-    sql = build_insert_query(table_name, ["filename", "id"], "test_val", 1)
+    sql = build_insert_query(table_name, ["filename", "id"], [("final_final_test", 5000), ("hehe", 2000), ("hehe", 2000), ("hehe", 2000), ("hehe", 2000), ("hehe", 2000), ("hehe", 2000)])
     execute_raw_insert(sql, InsertType.SINGLE_INSERT)
+    # execute_raw_insert(sql)
 
 def test_pandas_insert():
     df = pd.DataFrame([["test_5", 5], ["test_6", 6],["test_7", 7],["test_8", 8] ], columns=["filename", "id"])
     execute_pandas_insert(df, InsertType.SINGLE_INSERT)
 
 def insert_query():
-    sql = build_insert_query(table_name, ["filename", "id"], "test_val", 1)
+    sql = build_insert_query(table_name, ["filename", "id"], [("final_final_test", 5000), ("hehe", 2000)])
     print(sql)
 
 
 # test_raw_select()
-test_pandas_select()
+# test_pandas_select()
 # test_raw_insert()
 # test_pandas_insert()
-# insert_query()
+insert_query()

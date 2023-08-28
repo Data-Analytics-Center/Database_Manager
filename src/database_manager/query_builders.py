@@ -1,5 +1,6 @@
 """Contains functions used to build queries."""
 
+MAX_INSERT_LIMIT = 80000
 
 def build_select_query(
     table: str,
@@ -19,13 +20,14 @@ def build_select_query(
         group_by (str, optional): Group by clause. Defaults to None.
         order_by (str, optional): Order by clause. Defaults to None.
 
+
     Raises:
         Exception: If table name is not provided.
+
 
     Returns:
         A select query.
     """
-
     if table is None:
         raise ValueError("Table name is required.")
 
@@ -34,18 +36,18 @@ def build_select_query(
     )
 
     if where is not None:
-        query += f" WHERE {where}"
+        sql_query += f" WHERE {where}"
 
     if group_by is not None:
-        query += f" GROUP BY {group_by}"
+        sql_query += f" GROUP BY {group_by}"
 
     if order_by is not None:
-        query += f" ORDER BY {order_by}"
+        sql_query += f" ORDER BY {order_by}"
 
     return sql_query
 
 
-def build_insert_query(table: str, cols: list, *values) -> str:
+def build_insert_query(table: str, cols: list, values: list[tuple]) -> str:
     """Build an insert query.
 
     Arguments:
@@ -61,18 +63,28 @@ def build_insert_query(table: str, cols: list, *values) -> str:
     Returns:
         An insert query.
     """
-
     if not table:
         raise ValueError("Table name is required.")
 
     if not cols:
         raise ValueError("At least one column is required!")
 
-    if len(cols) != len(values):
+    if len(values) > MAX_INSERT_LIMIT:
         raise ValueError(
-            "Number of columns does not match the number of args provided!"
+            f"Number of values exceeds the maximum limit of {MAX_INSERT_LIMIT}"
         )
 
-    sql_query = f"""INSERT INTO {table} ({", ".join(cols)}) VALUES ({', '.join(["?" for val in values])});"""
+    vals = []
+    for val in values:
+        if len(cols) != len(val):
+            raise ValueError(
+                "Number of columns does not match the number of args provided!"
+            )
+        if isinstance(val, str):
+            vals.append(f"'{val}'")
+        else:
+            vals.append(str(val))
+    
+    sql_query = f"""INSERT INTO {table} ({", ".join(cols)}) VALUES {', '.join(vals)};"""
 
     return sql_query

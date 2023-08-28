@@ -10,9 +10,9 @@ from .connection_manager import create_engine, InsertType
     - add docstrings
     - test
 """
+MAX_INSERT_LIMIT = 80000
 
-
-def validate_engine(engine: Engine) -> None:
+def _validate_engine(engine: Engine) -> None:
     """Validate an engine object was initialized properly.
 
     Arguments:
@@ -24,7 +24,7 @@ def validate_engine(engine: Engine) -> None:
         raise ValueError("Object passed as engine is not of type Engine")
 
 
-def validate_sql(sql: str) -> None:
+def _validate_sql(sql: str) -> None:
     """Validate a SQL query is not garbage.
 
     Arguments:
@@ -39,7 +39,7 @@ def validate_sql(sql: str) -> None:
 
 
 def execute_raw_select(sql: str) -> CursorResult:
-    """Create and engine and executes a SQL select operation using SQLAlchemy.
+    """Create an engine and execute a SQL select operation using SQLAlchemy.
 
     Arguments:
         sql (str): SQL query to execute.
@@ -49,8 +49,8 @@ def execute_raw_select(sql: str) -> CursorResult:
     """
     engine = create_engine()
 
-    validate_engine(engine)
-    validate_sql(sql)
+    _validate_engine(engine)
+    _validate_sql(sql)
 
     session_initializer = sessionmaker(bind=engine)
     with session_initializer() as session:
@@ -71,49 +71,57 @@ def execute_pandas_select(
     """
     engine = create_engine()
 
-    validate_engine(engine)
-    validate_sql(sql)
+    _validate_engine(engine)
+    _validate_sql(sql)
 
     dataframe = pd.read_sql(sql, engine)
     return dataframe
 
 
-def execute_raw_insert(sql: str, insert_type: InsertType = InsertType.BULK_INSERT
-):
+def execute_raw_insert(sql: str, insert_type: InsertType = InsertType.BULK_INSERT):
     """Create an engine and executes a SQL insert operation using SQLAlchemy.
 
     Arguments:
         sql (str): SQL query to execute.
         insert_type (InsertType, optional): Type of insert operation to execute. Defaults to InsertType.BULK_INSERT.
-    
+        
+
     Raises:
         ValueError: If insert_type is not of type InsertType.
     
-    Returns:    
-        None
-    """
-    engine = create_engine(insert_type)
-    validate_engine(engine)
-
-    session_initializer = sessionmaker(bind=engine)
-    with session_initializer() as session:
-        session.execute(text(sql))
-
-
-def execute_pandas_insert( df: pd.DataFrame, insert_type: InsertType = InsertType.BULK_INSERT):
-    """Create an engine and executes a SQL insert operation using SQLAlchemy.
-
-    Arguments:
-        df (DataFrame): DataFrame to insert into the database.
-        insert_type (InsertType, optional): Type of insert operation to execute. Defaults to InsertType.BULK_INSERT.
-    
-    Raises:
-        ValueError: If insert_type is not of type InsertType.
 
     Returns:
         None
     """
     engine = create_engine(insert_type)
-    validate_engine(engine)
+    _validate_engine(engine)
+
+    session_initializer = sessionmaker(bind=engine)
+    with session_initializer() as session:
+        session.execute(text(sql))
+        session.commit()
+
+
+def execute_pandas_insert(df: pd.DataFrame):
+    """Create an engine and executes a SQL insert operation using SQLAlchemy.
+
+    Arguments:
+        df (DataFrame): DataFrame to insert into the database.
+        insert_type (InsertType, optional): Type of insert operation to execute. Defaults to InsertType.BULK_INSERT.
+
+    Raises:
+        ValueError: If insert_type is not of type InsertType.
+
+
+    Returns:
+        None
+    """
+    engine = create_engine(InsertType.BULK_INSERT)
+    _validate_engine(engine)
+
+    if len(df) > MAX_INSERT_LIMIT:
+        raise ValueError(
+            f"DataFrame has {len(df)} rows, which is greater than the maximum insert limit of {MAX_INSERT_LIMIT}."
+        )
 
     df.to_sql("test", engine, if_exists="append", index=False)
