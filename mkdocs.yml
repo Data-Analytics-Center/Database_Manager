@@ -2,9 +2,11 @@ site_name: Database Manager
 
 nav:
   - Home: index.md
-  - Queries: queries.md
-  - Connections: connections.md
-  - Executing Queries: execute_query.md
+  - API: API.md
+  - Maintainer Reference:
+    - connection_manager.py: subpages/connections.md
+    - execute_query.py: subpages/execute_query.md
+    - query_builders.py: subpages/query_builders.md
 
 theme:
   name: material

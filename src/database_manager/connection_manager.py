@@ -9,7 +9,12 @@ from sqlalchemy import Engine
 
 
 class InsertType(Enum):
-    """Enum to define the type of engine to create."""
+    """Enum to define the type of engine to create.
+
+    Attributes:
+        BULK_INSERT (int): Engine is for bulk inserts only.
+        SINGLE_INSERT (int): Engine is for single inserts only.
+    """
     
     BULK_INSERT = 1
     SINGLE_INSERT = 2

@@ -1,4 +1,4 @@
-"""Defines all the query builders for all database operations."""
+"""Module to execute SQL queries using SQLAlchemy."""
 
 from sqlalchemy import CursorResult, Engine, text
 from sqlalchemy.orm import sessionmaker
