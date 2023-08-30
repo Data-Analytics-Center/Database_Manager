@@ -14,19 +14,17 @@ def build_select_query(
 
     Arguments:
         table (str): Table to select from.
-        top (int, optional): Number of rows to select. Defaults to None, selecting all rows.
+        top (int, optional): Number of rows to select. Defaults selecting all rows.
         cols (list, optional): List of columns to select. Defaults to ["*"].
         where (str, optional): Where clause. Defaults to None.
         group_by (str, optional): Group by clause. Defaults to None.
         order_by (str, optional): Order by clause. Defaults to None.
 
-
     Raises:
         Exception: If table name is not provided.
 
-
     Returns:
-        A select query.
+        sql_query (str): A select query.
     """
     if table is None:
         raise ValueError("Table name is required.")
@@ -53,15 +51,16 @@ def build_insert_query(table: str, cols: list, values: list[tuple]) -> str:
     Arguments:
         table (str): Table to insert into.
         cols (list): List of columns to insert into.
-        values (list): Values to insert into corresponding columns.
+        values (list[tuple]): List of values to insert.
 
     Raises:
         Exception: If table name is not provided.
         Exception: If columns list is not provided.
-        Exception: If number of columns does not match the number of arguments provided.
+        Exception: If number of values exceeds the maximum insert limit.
+        Exception: If number of columns does not match the number of args provided.
 
     Returns:
-        An insert query.
+        sql_query (str): An insert query.
     """
     if not table:
         raise ValueError("Table name is required.")

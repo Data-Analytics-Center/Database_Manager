@@ -31,7 +31,7 @@ def create_engine(insert_type: InsertType = None) -> Engine:  # noqa: FBT001
         database (str): The database to connect to.
 
     Returns:
-        Engine: A SQLAlchemy Engine object.
+        engine (Engine): A SQLAlchemy Engine object.
 
     Raises:
         ValueError: If any of the environment variables are not set properly.

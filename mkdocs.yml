@@ -4,6 +4,7 @@ nav:
   - Home: index.md
   - Queries: queries.md
   - Connections: connections.md
+  - Executing Queries: execute_query.md
 
 theme:
   name: material

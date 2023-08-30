@@ -17,6 +17,13 @@ def validate_engine(engine: Engine) -> None:
 
     Arguments:
         engine (Engine): Engine object to validate.
+
+    Raises:
+        ValueError: If engine is None.
+        ValueError: If engine is not of type Engine.
+
+    Returns:
+        None
     """
     if engine is None:
         raise ValueError("Engine is None")
@@ -29,6 +36,14 @@ def validate_sql(sql: str) -> None:
 
     Arguments:
         sql (str): SQL query to validate.
+
+    Raises:
+        ValueError: If sql is None.
+        ValueError: If sql is empty.
+        ValueError: If sql is whitespace.
+
+    Returns:
+        None
     """
     if sql is None:
         raise ValueError("SQL is None")
@@ -61,34 +76,32 @@ def execute_raw_select(sql: str) -> CursorResult:
 def execute_pandas_select(
     sql: str,
 ) -> pd.DataFrame:
-    """Create an engine and executes a SQL select operation using SQLAlchemy.
+    """Create an engine and execute a SQL select operation using SQLAlchemy.
 
     Arguments:
         sql (str): SQL query to execute.
 
     Returns:
-        DataFrame: Results of the query.
+        data_frame: Result of the query.
     """
     engine = create_engine()
 
     validate_engine(engine)
     validate_sql(sql)
 
-    dataframe = pd.read_sql(sql, engine)
-    return dataframe
+    data_frame = pd.read_sql(sql, engine)
+    return data_frame
 
 
-def execute_raw_insert(sql: str, insert_type: InsertType = InsertType.BULK_INSERT):
-    """Create an engine and executes a SQL insert operation using SQLAlchemy.
+def execute_raw_insert(sql: str, insert_type: InsertType = InsertType.BULK_INSERT) -> None:
+    """Create an engine and execute a SQL insert operation using SQLAlchemy.
 
     Arguments:
         sql (str): SQL query to execute.
         insert_type (InsertType, optional): Type of insert operation to execute. Defaults to InsertType.BULK_INSERT.
-        
 
     Raises:
         ValueError: If insert_type is not of type InsertType.
-    
 
     Returns:
         None
@@ -105,12 +118,15 @@ def execute_raw_insert(sql: str, insert_type: InsertType = InsertType.BULK_INSER
         session.commit()
 
 
-def execute_pandas_insert(table: str, df: pd.DataFrame):
-    """Create an engine and executes a SQL insert operation using SQLAlchemy.
+def execute_pandas_insert(table: str, data_frame: pd.DataFrame) -> None:
+    """Create an engine and execute a SQL insert operation using SQLAlchemy.
 
     Arguments:
         table (str): Table to insert into.
-        df (DataFrame): DataFrame to insert into the database.
+        data_frame (pd.DataFrame): DataFrame to insert into the database.
+
+    Raises:
+        ValueError: If the DataFrame has more rows than the maximum insert limit.
 
     Returns:
         None
@@ -118,9 +134,9 @@ def execute_pandas_insert(table: str, df: pd.DataFrame):
     engine = create_engine()
     validate_engine(engine)
 
-    if len(df) > MAX_INSERT_LIMIT:
+    if len(data_frame) > MAX_INSERT_LIMIT:
         raise ValueError(
-            f"DataFrame has {len(df)} rows, which is greater than the maximum insert limit of {MAX_INSERT_LIMIT}."
+            f"Size of DataFrame exceeds the maximum limit of {MAX_INSERT_LIMIT}"
         )
 
-    df.to_sql(table, engine, if_exists="append", index=False)
+    data_frame.to_sql(table, engine, if_exists="append", index=False)
