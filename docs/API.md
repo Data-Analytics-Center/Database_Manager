@@ -1,4 +1,3 @@
-## Contains all the functions that the user needs in order to create SQL queries and execute them.
 ::: src.database_manager.query_builders
 
 ::: src.database_manager.execute_query
