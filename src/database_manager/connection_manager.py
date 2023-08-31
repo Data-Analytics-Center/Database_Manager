@@ -20,7 +20,7 @@ class InsertType(Enum):
     SINGLE_INSERT = 2
 
 
-def create_engine(insert_type: InsertType = None) -> Engine:  # noqa: FBT001
+def create_engine(insert_type: InsertType = None) -> Engine: 
     """Create a connection object to a database.
 
     This function creates a SQLAlchemy Engine connection object to a database.

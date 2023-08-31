@@ -1,4 +1,8 @@
-"""Module to execute SQL queries using SQLAlchemy."""
+"""Execute Queries module.
+
+Each function is a different way to execute a SQL query using SQLAlchemy.
+For each SQL operation we offer a pandas function and a raw function
+"""
 
 from sqlalchemy import CursorResult, Engine, text
 from sqlalchemy.orm import sessionmaker
@@ -7,8 +11,6 @@ from .connection_manager import create_engine, InsertType
 
 """ TODO:
     - Add logging
-    - add docstrings
-    - test
 """
 MAX_INSERT_LIMIT = 80000
 

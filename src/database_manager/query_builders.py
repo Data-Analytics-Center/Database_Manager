@@ -1,4 +1,4 @@
-"""Contains functions used to build queries."""
+"""Query Builders module contains functions to build SQL queries."""
 
 MAX_INSERT_LIMIT = 80000
 
@@ -25,6 +25,16 @@ def build_select_query(
 
     Returns:
         sql_query (str): A select query.
+
+    Example:
+        To use this function, call `build_select_query()`:
+        ```python
+        sql_query = build_select_query(
+            table="dbo.MyTable",
+            top=100,
+            cols=["Col1", "Col2"],
+            where="Col1 = 1",
+        ```
     """
     if table is None:
         raise ValueError("Table name is required.")
@@ -51,7 +61,7 @@ def build_insert_query(table: str, cols: list, values: list[tuple]) -> str:
     Arguments:
         table (str): Table to insert into.
         cols (list): List of columns to insert into.
-        values (list[tuple]): List of values to insert.
+        values (list[tuple]): List of values to insert where each tuple represents a row.
 
     Raises:
         Exception: If table name is not provided.
@@ -61,6 +71,16 @@ def build_insert_query(table: str, cols: list, values: list[tuple]) -> str:
 
     Returns:
         sql_query (str): An insert query.
+
+    Example:
+        To use this function, call `build_insert_query()`:
+        ```python
+        sql_query = build_insert_query(
+            table="dbo.MyTable",
+            cols=["Col1", "Col2"],
+            values=[(1, "Value1"), (2, "Value2")],
+        )
+        ```
     """
     if not table:
         raise ValueError("Table name is required.")
