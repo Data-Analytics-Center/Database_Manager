@@ -14,6 +14,7 @@ from .connection_manager import create_engine, InsertType
 """
 MAX_INSERT_LIMIT = 80000
 
+
 def validate_engine(engine: Engine) -> None:
     """Validate an engine object was initialized properly.
 
@@ -110,7 +111,7 @@ def execute_raw_insert(sql: str, insert_type: InsertType = InsertType.BULK_INSER
     """
     if not isinstance(insert_type, InsertType):
         raise ValueError("Insert type is not of type InsertType")
-    
+
     engine = create_engine(insert_type)
     validate_engine(engine)
 
@@ -138,7 +139,7 @@ def execute_pandas_insert(table: str, data_frame: pd.DataFrame) -> None:
 
     if len(data_frame) > MAX_INSERT_LIMIT:
         raise ValueError(
-            f"Size of DataFrame exceeds the maximum limit of {MAX_INSERT_LIMIT}"
+            "DataFrame has more rows than the maximum insert limit"
         )
 
     data_frame.to_sql(table, engine, if_exists="append", index=False)
