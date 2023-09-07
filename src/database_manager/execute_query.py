@@ -14,6 +14,7 @@ from .connection_manager import create_engine, InsertType
 """
 MAX_INSERT_LIMIT = 80000
 
+
 def validate_engine(engine: Engine) -> None:
     """Validate an engine object was initialized properly.
 
@@ -110,7 +111,7 @@ def execute_raw_insert(sql: str, insert_type: InsertType = InsertType.BULK_INSER
     """
     if not isinstance(insert_type, InsertType):
         raise ValueError("Insert type is not of type InsertType")
-    
+
     engine = create_engine(insert_type)
     validate_engine(engine)
 
