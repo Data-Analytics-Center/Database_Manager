@@ -55,13 +55,13 @@ def build_select_query(
     return sql_query
 
 
-def build_insert_query(table: str, cols: list, values: list[tuple]) -> str:
+def build_insert_query(table: str, columns: list, data_rows: list[tuple]) -> str:
     """Build an insert query.
 
     Arguments:
         table (str): Table to insert into.
-        cols (list): List of columns to insert into.
-        values (list[tuple]): List of values to insert where each tuple represents a row.
+        columns (list): List of columns to insert into.
+        data_rows (list[tuple]): List of values to insert where each tuple represents a row.
 
     Raises:
         Exception: If table name is not provided.
@@ -85,25 +85,28 @@ def build_insert_query(table: str, cols: list, values: list[tuple]) -> str:
     if not table:
         raise ValueError("Table name is required.")
 
-    if not cols:
+    if not columns:
         raise ValueError("At least one column is required!")
 
-    if len(values) > MAX_INSERT_LIMIT:
+    if len(data_rows) > MAX_INSERT_LIMIT:
         raise ValueError(
             f"Number of values exceeds the maximum limit of {MAX_INSERT_LIMIT}"
         )
 
-    vals = []
-    for val in values:
-        if len(cols) != len(val):
+    modified_data_rows = []
+    for row in data_rows:
+        if len(columns) != len(row):
             raise ValueError(
                 "Number of columns does not match the number of args provided!"
             )
-        if isinstance(val, str):
-            vals.append(f"'{val}'")
-        else:
-            vals.append(str(val))
-    
-    sql_query = f"""INSERT INTO {table} ({", ".join(cols)}) VALUES {', '.join(vals)};"""
+        new_row = []
+        for i in range(len(row)):
+            if isinstance(row[i], str):
+                new_row.append(f'{row[i]}')
+            else:
+                new_row.append(row[i])
+        modified_data_rows.append(str(new_row).replace("[", "(").replace("]", ")"))
+
+    sql_query = f"""INSERT INTO {table} ({", ".join(columns)}) VALUES {', '.join(modified_data_rows)};"""
 
     return sql_query
