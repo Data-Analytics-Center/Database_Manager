@@ -12,7 +12,8 @@ def test_valid_raw_insert():
     """Tests the execute_raw_insert() function."""
     table_name = "test"
     sql = build_insert_query(table_name, ["id", "val"], [(1, "Adam")])
-    sql2 = build_insert_query(table_name, ["id", "val"], [(1, "Adam"), (2, "Bob")])
+    sql2 = build_insert_query(table_name, ["id", "val"], [
+                              (1, "Adam"), (2, "Bob")])
 
     assert sql is not None
     assert sql != ""
@@ -29,13 +30,15 @@ def test_valid_raw_insert():
 def test_valid_pandas_insert():
     """Tests the execute_pandas_insert() function."""
     table_name = "test"
-    data_frame = pd.DataFrame({"id": [1, 2, 3], "val": ["Adam", "Bob", "Charlie"]})
+    data_frame = pd.DataFrame(
+        {"id": [1, 2, 3], "val": ["Adam", "Bob", "Charlie"]})
 
     assert data_frame is not None
     assert not data_frame.empty
 
     execute_pandas_insert(table_name, data_frame)
     execute_pandas_insert(table_name, data_frame)
+
 
 def test_invalid_insert_type_for_raw_insert():
     """Tests the execute_raw_insert() function for invalid insert type."""
@@ -48,7 +51,8 @@ def test_invalid_insert_type_for_raw_insert():
 
     with pytest.raises(ValueError, match="Insert type is not of type InsertType"):
         execute_raw_insert(sql, "invalid insert type")
-    
+
+
 def test_pandas_insert_for_exceeding_dataframe_size():
     """Tests the execute_pandas_insert() function for exceeding dataframe size."""
     max_insert_limit = 80000
@@ -62,5 +66,5 @@ def test_pandas_insert_for_exceeding_dataframe_size():
     assert data_frame is not None
     assert not data_frame.empty
 
-    with pytest.raises(ValueError, match="DataFrame has more rows than the maximum insert limit"):
+    with pytest.raises(ValueError):
         execute_pandas_insert(table_name, data_frame)

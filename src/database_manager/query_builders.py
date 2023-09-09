@@ -2,6 +2,7 @@
 
 MAX_INSERT_LIMIT = 80000
 
+
 def build_select_query(
     table: str,
     top: int = None,
@@ -36,11 +37,11 @@ def build_select_query(
             where="Col1 = 1",
         ```
     """
-    if table is None:
+    if table is None or table == "" or table == " ":
         raise ValueError("Table name is required.")
 
     sql_query = (
-        f"""SELECT {f"TOP {top}" if top else ""} {", ".join(cols)} FROM {table}"""
+        f"""SELECT {f"TOP {top} " if top else ""}{", ".join(cols)} FROM {table}"""
     )
 
     if where is not None:
@@ -105,7 +106,8 @@ def build_insert_query(table: str, columns: list, data_rows: list[tuple]) -> str
                 new_row.append(f'{row[i]}')
             else:
                 new_row.append(row[i])
-        modified_data_rows.append(str(new_row).replace("[", "(").replace("]", ")"))
+        modified_data_rows.append(
+            str(new_row).replace("[", "(").replace("]", ")"))
 
     sql_query = f"""INSERT INTO {table} ({", ".join(columns)}) VALUES {', '.join(modified_data_rows)};"""
 

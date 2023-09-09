@@ -139,7 +139,7 @@ def execute_pandas_insert(table: str, data_frame: pd.DataFrame) -> None:
 
     if len(data_frame) > MAX_INSERT_LIMIT:
         raise ValueError(
-            "DataFrame has more rows than the maximum insert limit"
+            f"DataFrame has more rows than the maximum insert limit of {MAX_INSERT_LIMIT}"
         )
 
     data_frame.to_sql(table, engine, if_exists="append", index=False)

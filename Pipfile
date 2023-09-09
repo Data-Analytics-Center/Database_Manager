@@ -10,6 +10,7 @@ pytest = "*"
 python-dotenv = "*"
 pyodbc = "*"
 pandas = "*"
+pytest-cov = "*"
 
 [dev-packages]
 mkdocstrings-python = "*"
