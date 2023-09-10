@@ -126,3 +126,8 @@ def test_build_insert_query():
 def test_columns_not_provided():
     with pytest.raises(TypeError):
         build_insert_query(TABLE_NAME, [(1, "Value1"), (2, "Value2")])
+
+
+def test_values_not_provided():
+    with pytest.raises(TypeError):
+        build_insert_query(TABLE_NAME, ["Id", "Value"])
