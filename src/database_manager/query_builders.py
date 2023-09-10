@@ -37,7 +37,7 @@ def build_select_query(
             where="Col1 = 1",
         ```
     """
-    if table is None or table == "" or table == " ":
+    if not table or table.isspace():
         raise ValueError("Table name is required.")
 
     sql_query = (
@@ -83,7 +83,7 @@ def build_insert_query(table: str, columns: list, data_rows: list[tuple]) -> str
         )
         ```
     """
-    if not table:
+    if not table or table.isspace():
         raise ValueError("Table name is required.")
 
     if not columns:

@@ -1,19 +1,16 @@
 """small test file."""
 
-from src.database_manager.query_builders import build_select_query
-
-MAX_INSERT_LIMIT = 80000
+from src.database_manager.query_builders import build_insert_query
 
 
 def main():
-    """Main function."""  # noqa: D401
-    sql_query = build_select_query(table="Test_Table", cols=["Id"])
-    sql_query_2 = build_select_query(
-        table="dbo.MyTable", cols=["Col1", "Col2"])
-    sql_query_3 = build_select_query(table="dbo.MyTable", top=10)
+    """main function."""
+    sql_query = build_insert_query(
+        table="some_table",
+        columns=["col1", "col2"],
+        data_rows=[(1, 2), (3, 4)],
+    )
     print(sql_query)
-    print(sql_query_2)
-    print(sql_query_3)
 
 
 if __name__ == "__main__":

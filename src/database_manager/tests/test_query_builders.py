@@ -4,15 +4,19 @@ import pytest
 from src.database_manager.query_builders import build_insert_query, build_select_query
 
 TABLE_NAME = "test"
+MAX_INSERT_LIMIT = 80000
 
 
-def test_build_select_query_invalid_table_name():
+def test_build_select_query_invalid_table():
     with pytest.raises(ValueError, match="Table name is required."):
         build_select_query("", cols=["Id"])
     with pytest.raises(ValueError, match="Table name is required."):
         build_select_query(" ", cols=["Id"])
     with pytest.raises(ValueError, match="Table name is required."):
         build_select_query(None, cols=["Id"])
+
+
+def test_build_select_query_no_table():
     with pytest.raises(TypeError):
         build_select_query(cols=["Id"])
     with pytest.raises(TypeError):
@@ -53,20 +57,72 @@ def test_build_select_query_no_cols():
 
 
 def test_build_select_query_no_where():
-    sql_query = build_select_query(table=TABLE_NAME, cols=["Col1", "Col2"])
-    expected_query = f"SELECT Col1, Col2 FROM {TABLE_NAME}"
+    sql_query = build_select_query(table=TABLE_NAME, cols=["Id", "Value"])
+    expected_query = f"SELECT Id, Value FROM {TABLE_NAME}"
     assert sql_query == expected_query
 
 
 def test_build_select_query_no_group_by():
     sql_query = build_select_query(table=TABLE_NAME, cols=[
-                                   "Col1"], where="Col1 > 5")
-    expected_query = f"SELECT Col1 FROM {TABLE_NAME} WHERE Col1 > 5"
+                                   "Id"], where="Id > 5")
+    expected_query = f"SELECT Id FROM {TABLE_NAME} WHERE Id > 5"
     assert sql_query == expected_query
 
 
 def test_build_select_query_no_order_by():
     sql_query = build_select_query(table=TABLE_NAME, cols=[
-                                   "Col1"], order_by="Col1 ASC")
-    expected_query = f"SELECT Col1 FROM {TABLE_NAME} ORDER BY Col1 ASC"
+                                   "Id"], order_by="Id ASC")
+    expected_query = f"SELECT Id FROM {TABLE_NAME} ORDER BY Id ASC"
     assert sql_query == expected_query
+
+
+def test_build_insert_query_invalid_table():
+    with pytest.raises(ValueError, match="Table name is required."):
+        build_insert_query("", ["Id", "Values"], [
+                           (1, "Value1"), (2, "Value2")])
+    with pytest.raises(ValueError, match="Table name is required."):
+        build_insert_query(" ", ["Id", "Values"], [
+                           (1, "Value1"), (2, "Value2")])
+    with pytest.raises(ValueError, match="Table name is required."):
+        build_insert_query(None, ["Id", "Values"], [
+                           (1, "Value1"), (2, "Value2")])
+
+
+def test_build_insert_query_no_table():
+    with pytest.raises(TypeError):
+        build_insert_query(["Id", "Values"], [(1, "Value1"), (2, "Value2")])
+
+
+def test_build_insert_query_no_columns():
+    with pytest.raises(ValueError, match="At least one column is required!"):
+        build_insert_query(TABLE_NAME, [], [(1, "Value1"), (2, "Value2")])
+
+
+def test_build_insert_query_exceeds_limit():
+    with pytest.raises(ValueError, match="Number of values exceeds the maximum limit"):
+        build_insert_query(
+            TABLE_NAME,
+            ["Id", "Value"],
+            [(1, "Value1")] * (MAX_INSERT_LIMIT + 1)
+        )
+
+
+def test_build_insert_query_column_mismatch():
+    with pytest.raises(ValueError, match="Number of columns does not match the number of args provided!"):
+        build_insert_query(TABLE_NAME, ["Id", "Value"], [
+                           (1, "Value1"), (2,)])
+
+
+def test_build_insert_query():
+    sql_query = build_insert_query(
+        TABLE_NAME,
+        ["Id", "Value"],
+        [(1, "Value1"), (2, "Value2")]
+    )
+    expected_query = f"INSERT INTO {TABLE_NAME} (Id, Value) VALUES (1, 'Value1'), (2, 'Value2');"
+    assert sql_query == expected_query
+
+
+def test_columns_not_provided():
+    with pytest.raises(TypeError):
+        build_insert_query(TABLE_NAME, [(1, "Value1"), (2, "Value2")])
