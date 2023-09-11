@@ -176,7 +176,7 @@ def execute_raw_insert(sql: str, insert_type: InsertType = InsertType.BULK_INSER
         ```
     """
     if not isinstance(insert_type, InsertType):
-        raise ValueError("Insert type is not of type InsertType")
+        raise ValueError("Insert type parameter given is not of type InsertType")
     
     validate_sql(sql)
 
