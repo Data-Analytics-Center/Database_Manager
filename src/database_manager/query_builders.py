@@ -6,7 +6,7 @@ MAX_INSERT_LIMIT = 80000
 def build_select_query(
     table: str,
     top: int = None,
-    cols: list = ["*"],
+    columns: list = ["*"],
     where: str = None,
     group_by: str = None,
     order_by: str = None,
@@ -16,7 +16,7 @@ def build_select_query(
     Arguments:
         table (str): Table to select from.
         top (int, optional): Number of rows to select. Defaults selecting all rows.
-        cols (list, optional): List of columns to select. Defaults to ["*"].
+        columns (list, optional): List of columns to select. Defaults to ["*"].
         where (str, optional): Where clause. Defaults to None.
         group_by (str, optional): Group by clause. Defaults to None.
         order_by (str, optional): Order by clause. Defaults to None.
@@ -42,7 +42,7 @@ def build_select_query(
         raise ValueError("Table name is required.")
 
     sql_query = (
-        f"""SELECT {f"TOP {top} " if top else ""}{", ".join(cols)} FROM {table}"""
+        f"""SELECT {f"TOP {top} " if top else ""}{", ".join(columns)} FROM {table}"""
     )
 
     if where is not None:

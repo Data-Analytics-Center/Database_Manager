@@ -9,6 +9,6 @@
 # It should print hello world, if not something is wrong.
 # """
 
-# from database_manager.tests import test_build
+# from src.database_manager.tests import test_build
 
 # print(test_build())

@@ -4,7 +4,7 @@ Each function is a different way to execute a SQL query using SQLAlchemy.
 For each SQL operation we offer a pandas function and a raw function
 """
 
-from sqlalchemy import CursorResult, Engine, text
+from sqlalchemy import Engine, text
 from sqlalchemy.orm import sessionmaker
 import pandas as pd
 from .connection_manager import create_engine, InsertType
@@ -27,6 +27,13 @@ def validate_engine(engine: Engine) -> None:
 
     Returns:
         None
+
+    Examples:
+        To use this function, call `validate_engine()`:
+        ```python
+        engine = create_engine()
+        validate_engine(engine)
+        ```
     """
     if engine is None:
         raise ValueError("Engine is None")
@@ -47,6 +54,20 @@ def validate_sql(sql: str) -> None:
 
     Returns:
         None
+
+    Examples:
+        To use this function, call `validate_sql()`:
+        ```python
+        sql = "SELECT * FROM table"
+        validate_sql(sql)
+        ```
+
+        To use this function with a query built using `build_select_query()`:
+        ```python
+        table = "table"
+        sql = build_select_query(table, top=10, cols=["id", "name"])
+        validate_sql(sql)
+        ```
     """
     if sql is None:
         raise ValueError("SQL is None")
@@ -56,14 +77,14 @@ def validate_sql(sql: str) -> None:
         raise ValueError("SQL is whitespace")
 
 
-def execute_raw_select(sql: str) -> CursorResult:
-    """Create an engine and execute a SQL select operation using SQLAlchemy.
+def execute_raw_select(sql: str) -> list[tuple]:
+    """Create an engine and execute a SQL select operation using SQLAlchemy, returning a list of tuples.
 
     Arguments:
         sql (str): SQL query to execute.
 
     Returns:
-        CursorResult: Results of the query.
+        results (list[tuple]): Result of the query.
 
     Examples:
         To use this function with a custom sql query:
@@ -88,7 +109,7 @@ def execute_raw_select(sql: str) -> CursorResult:
     session_initializer = sessionmaker(bind=engine)
     with session_initializer() as session:
         results = session.execute(text(sql)).fetchall()
-    return results
+    return list(results)
 
 
 def execute_pandas_select(

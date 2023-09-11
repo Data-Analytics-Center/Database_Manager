@@ -2,6 +2,7 @@ site_name: Database Manager
 
 nav:
   - API:
+    - Description: API_Subpages/description.md
     - Query Builders: API_Subpages/query_builders.md
     - Execute Query: API_Subpages/execute_query.md
   - Readme: index.md
