@@ -60,9 +60,19 @@ def create_engine(insert_type: InsertType = None) -> Engine:
     if server is None or server == "" or server.isspace():
         raise ValueError("Server environment variable is not properly set.")
 
-    connection_string = (
-        f"mssql+pyodbc://@{server}/{database}?driver={driver}&Encrypt=no"
+    env_type = os.getenv("ENV_TYPE")
+
+    if env_type == "PROD":
+        uid = os.getenv("UID")
+        pid = os.getenv("PID")
+        connection_string = (
+        f"mssql+pyodbc://{uid}:{pid}@{server}/{database}?driver={driver}"
     )
+    else:
+        connection_string = (
+            f"mssql+pyodbc://@{server}/{database}?driver={driver}&Encrypt=no"
+        )
+
     if insert_type == InsertType.BULK_INSERT:
         engine = sqlalchemy_create_engine(connection_string, fast_executemany=True)
     else:
