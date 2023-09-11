@@ -8,7 +8,7 @@ from .test_utils import delete_env_variables
 import pytest
 
 MAX_INSERT_LIMIT = 80000
-TABLE_NAME = "test"
+TABLE_NAME = "dbo.test"
 
 def test_valid_raw_insert_for_single_insert():
     """Tests the execute_raw_insert() function for single insert."""
