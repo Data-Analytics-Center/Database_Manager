@@ -43,7 +43,7 @@ def test_invalid_insert_type_for_raw_insert():
     assert sql != ""
     assert sql != " "
 
-    with pytest.raises(ValueError, match="Insert type is not of type InsertType"):
+    with pytest.raises(ValueError, match="Insert type parameter given is not of type InsertType"):
         execute_raw_insert(sql, "invalid insert type")
 
 
