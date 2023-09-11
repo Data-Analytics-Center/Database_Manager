@@ -111,6 +111,8 @@ def execute_raw_insert(sql: str, insert_type: InsertType = InsertType.BULK_INSER
     """
     if not isinstance(insert_type, InsertType):
         raise ValueError("Insert type is not of type InsertType")
+    
+    validate_sql(sql)
 
     engine = create_engine(insert_type)
     validate_engine(engine)
@@ -129,17 +131,29 @@ def execute_pandas_insert(table: str, data_frame: pd.DataFrame) -> None:
         data_frame (pd.DataFrame): DataFrame to insert into the database.
 
     Raises:
+        ValueError: If table is None.
+        ValueError: If data_frame is not of type pd.DataFrame.
         ValueError: If the DataFrame has more rows than the maximum insert limit.
+        ValueError: If the DataFrame is empty.
 
     Returns:
         None
     """
-    engine = create_engine()
-    validate_engine(engine)
+    if not table or table.isspace():
+        raise ValueError("Table name is None")
+
+    if not isinstance(data_frame, pd.DataFrame):
+        raise ValueError("Dataframe is not of type pd.DataFrame")
 
     if len(data_frame) > MAX_INSERT_LIMIT:
         raise ValueError(
-            f"DataFrame has more rows than the maximum insert limit of {MAX_INSERT_LIMIT}"
+            "Dataframe size exceeds the maximum insert limit"
         )
+
+    if data_frame.empty:
+        raise ValueError("Dataframe is empty")
+
+    engine = create_engine()
+    validate_engine(engine)
 
     data_frame.to_sql(table, engine, if_exists="append", index=False)

@@ -7,6 +7,7 @@ from ..execute_query import (
     validate_sql,
 )
 from ..query_builders import build_select_query
+from .test_utils import delete_env_variables
 
 import pytest
 
@@ -29,6 +30,7 @@ def test_sql_raw_select():
 
 def test_sql_select_pandas():
     """Test a valid pandas select is executed."""
+    delete_env_variables()
     table = "test_select"
     sql = build_select_query(table, 10, ["id", "name"])
     assert sql is not None
@@ -74,6 +76,7 @@ def test_validate_sql_whitespace():
 # You'll need to mock 'create_engine' to return a valid engine and possibly the session to simulate actual behavior.
 def test_execute_raw_select_invalid_sql():
     """Test that an invalid SQL query is rejected for a raw select."""
+    delete_env_variables()
     with pytest.raises(ValueError, match="SQL is whitespace"):
         execute_raw_select(" ")
 
@@ -81,5 +84,6 @@ def test_execute_raw_select_invalid_sql():
 # Again, you'll likely need to mock 'create_engine' and possibly other methods for this test.
 def test_execute_pandas_select_invalid_sql():
     """Test that an invalid SQL query is rejected for a pandas select."""
+    delete_env_variables()
     with pytest.raises(ValueError, match="SQL is whitespace"):
         execute_pandas_select(" ")

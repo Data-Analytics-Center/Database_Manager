@@ -6,6 +6,7 @@ import pytest
 from sqlalchemy import Engine
 
 from ..connection_manager import create_engine
+from .test_utils import delete_env_variables
 
 
 def test_valid_engine_test():
@@ -17,6 +18,7 @@ def test_valid_engine_test():
 
 def test_engine_missing_server():
     """Test creating engine with missing server environment variable."""
+    delete_env_variables()
     os.environ["SERVER"] = ""
     with pytest.raises(
         ValueError, match=r"Server environment variable is not properly set."
@@ -26,6 +28,7 @@ def test_engine_missing_server():
 
 def test_engine_missing_database():
     """Test creating engine with missing database environment variable."""
+    delete_env_variables()
     os.environ["DATABASE"] = ""
     with pytest.raises(
         ValueError, match=r"Database environment variable is not properly set."
@@ -35,6 +38,7 @@ def test_engine_missing_database():
 
 def test_engine_missing_driver():
     """Test creating engine with missing driver environment variable."""
+    delete_env_variables()
     os.environ["DRIVER"] = ""
     with pytest.raises(
         ValueError, match=r"Driver environment variable is not properly set."
