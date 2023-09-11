@@ -10,19 +10,19 @@ MAX_INSERT_LIMIT = 80000
 def test_build_select_query_invalid_table():
     """Test that the function raises ValueError when table name is invalid."""
     with pytest.raises(ValueError, match="Table name is required."):
-        build_select_query("", cols=["Id"])
+        build_select_query("", columns=["Id"])
     with pytest.raises(ValueError, match="Table name is required."):
-        build_select_query(" ", cols=["Id"])
+        build_select_query(" ", columns=["Id"])
     with pytest.raises(ValueError, match="Table name is required."):
-        build_select_query(None, cols=["Id"])
+        build_select_query(None, columns=["Id"])
 
 
 def test_build_select_query_no_table():
     """Test that the function raises TypeError when table name is not provided."""
     with pytest.raises(TypeError):
-        build_select_query(cols=["Id"])
+        build_select_query(columns=["Id"])
     with pytest.raises(TypeError):
-        build_select_query(cols=["Id"], where="Id = 5")
+        build_select_query(columns=["Id"], where="Id = 5")
 
 
 def test_build_select_query_default_args():
@@ -37,7 +37,7 @@ def test_build_select_query_with_all_args_provided():
     sql_query = build_select_query(
         table=TABLE_NAME,
         top=100,
-        cols=["Id", "Value"],
+        columns=["Id", "Value"],
         where="Id = 5",
         group_by="Id",
         order_by="Value DESC",
@@ -50,7 +50,7 @@ def test_build_select_query_with_all_args_provided():
 
 def test_build_select_query_no_top():
     """Test that the function returns the correct query when top is not provided."""
-    sql_query = build_select_query(table=TABLE_NAME, cols=["Id"])
+    sql_query = build_select_query(table=TABLE_NAME, columns=["Id"])
     expected_query = f"SELECT Id FROM {TABLE_NAME}"
     assert sql_query == expected_query
 
@@ -64,14 +64,14 @@ def test_build_select_query_no_cols():
 
 def test_build_select_query_no_where():
     """Test that the function returns the correct query when the 'where' clause is not provided."""
-    sql_query = build_select_query(table=TABLE_NAME, cols=["Id", "Value"])
+    sql_query = build_select_query(table=TABLE_NAME, columns=["Id", "Value"])
     expected_query = f"SELECT Id, Value FROM {TABLE_NAME}"
     assert sql_query == expected_query
 
 
 def test_build_select_query_no_group_by():
     """Test that the function returns the correct query when the 'group by' clause is not provided."""
-    sql_query = build_select_query(table=TABLE_NAME, cols=[
+    sql_query = build_select_query(table=TABLE_NAME, columns=[
                                    "Id"], where="Id > 5")
     expected_query = f"SELECT Id FROM {TABLE_NAME} WHERE Id > 5"
     assert sql_query == expected_query
@@ -79,7 +79,7 @@ def test_build_select_query_no_group_by():
 
 def test_build_select_query_no_order_by():
     """Test that the function returns the correct query when the 'order by' clause is not provided."""
-    sql_query = build_select_query(table=TABLE_NAME, cols=[
+    sql_query = build_select_query(table=TABLE_NAME, columns=[
                                    "Id"], order_by="Id ASC")
     expected_query = f"SELECT Id FROM {TABLE_NAME} ORDER BY Id ASC"
     assert sql_query == expected_query

@@ -19,7 +19,7 @@ import pytest
 def test_sql_raw_select():
     """Test a valid raw select is executed."""
     table = "test_select"
-    sql = build_select_query(table, top=10, cols=["id", "name"])
+    sql = build_select_query(table, top=10, columns=["id", "name"])
     assert sql is not None
     assert sql != ""
     assert sql != " "
