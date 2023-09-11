@@ -35,6 +35,7 @@ def build_select_query(
             top=100,
             cols=["Col1", "Col2"],
             where="Col1 = 1",
+        )
         ```
     """
     if not table or table.isspace():

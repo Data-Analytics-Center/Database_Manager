@@ -64,6 +64,21 @@ def execute_raw_select(sql: str) -> CursorResult:
 
     Returns:
         CursorResult: Results of the query.
+
+    Examples:
+        To use this function with a custom sql query:
+        ```python
+        sql = "SELECT * FROM table"
+        results = execute_raw_select(sql)
+        ```
+
+        To use this function with a query built using `build_select_query()`:
+        ```python
+        table = "table"
+        sql = build_select_query(table, top=10, cols=["id", "name"])
+        results = execute_raw_select(sql)
+        ```
+
     """
     engine = create_engine()
 
@@ -86,6 +101,20 @@ def execute_pandas_select(
 
     Returns:
         data_frame: Result of the query.
+
+    Examples:
+        To use this function with a custom sql query:
+        ```python
+        sql = "SELECT * FROM table"
+        results = execute_pandas_select(sql)
+        ```
+
+        To use this function with a query built using `build_select_query()`:
+        ```python
+        table = "table"
+        sql = build_select_query(table, top=10, cols=["id", "name"])
+        results = execute_pandas_select(sql)
+        ```
     """
     engine = create_engine()
 
@@ -108,6 +137,22 @@ def execute_raw_insert(sql: str, insert_type: InsertType = InsertType.BULK_INSER
 
     Returns:
         None
+
+    Examples:
+        To use this function with a custom sql query:
+        ```python
+        sql = "INSERT INTO table VALUES (1, 'name')"
+        execute_raw_insert(sql)
+        ```
+
+        To use this function with a query built using `build_insert_query()`:
+        ```python
+        table = "table"
+        columns = ["id", "name"]
+        data_rows = [(1, "name")]
+        sql = build_insert_query(table, columns, data_rows)
+        execute_raw_insert(sql)
+        ```
     """
     if not isinstance(insert_type, InsertType):
         raise ValueError("Insert type is not of type InsertType")
@@ -138,6 +183,19 @@ def execute_pandas_insert(table: str, data_frame: pd.DataFrame) -> None:
 
     Returns:
         None
+
+    Examples:
+        To use this function, call `execute_pandas_insert()`:
+        ```python
+        table = "dbo.MyTable"
+        data_frame = pd.DataFrame(
+            {
+                "Col1": [1, 2],
+                "Col2": ["Value1", "Value2"],
+            }
+        )
+        execute_pandas_insert(table, data_frame)
+        ```
     """
     if not table or table.isspace():
         raise ValueError("Table name is None")
