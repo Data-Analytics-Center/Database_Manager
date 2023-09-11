@@ -2,6 +2,7 @@
 
 from enum import Enum
 import os
+import urllib.parse
 
 from dotenv import load_dotenv
 from sqlalchemy import create_engine as sqlalchemy_create_engine
@@ -66,7 +67,7 @@ def create_engine(insert_type: InsertType = None) -> Engine:
         uid = os.getenv("UID")
         pid = os.getenv("PID")
         connection_string = (
-        f"mssql+pyodbc://{uid}:{pid}@{server}/{database}?driver={driver}"
+	f"mssql+pyodbc://{uid}:{urllib.parse.quote_plus(pid)}@{server}/{database}?driver={urllib.parse.quote_plus(driver)}&Encrypt=no"
     )
     else:
         connection_string = (
