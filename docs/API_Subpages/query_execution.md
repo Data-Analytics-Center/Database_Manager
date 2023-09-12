@@ -14,10 +14,10 @@ Example:
         results = execute_pandas_select(sql)
         ```
 
-        ```python
-        sql = "SELECT * FROM table"
-        results = execute_pandas_select(sql, database=MY_DATABASE)
-        ```
+```python
+sql = "SELECT * FROM table"
+results = execute_pandas_select(sql, database=MY_DATABASE)
+```
 
 ::: src.database_manager.query_execution
     options:
