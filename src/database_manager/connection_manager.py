@@ -26,7 +26,8 @@ def create_engine(database: str = None, insert_type: InsertType = None) -> Engin
 
     This function creates a SQLAlchemy Engine connection object to a database.
     It relies on environment variables for the connection parameters,
-    including the driver, server, database, and environment type.
+    including the driver, server, database, and environment type. Database can be
+    passed as a parameter to this function, or it can be set as an environment variable.
 
     Arguments:
         database (str): The name of the database to connect to.

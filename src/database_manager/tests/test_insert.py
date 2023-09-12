@@ -1,15 +1,21 @@
 """Tests the insert functions."""
+import os
+
 import pandas as pd
 import pytest
 
 from src.database_manager.connection_manager import InsertType
-from src.database_manager.execute_query import execute_pandas_insert, execute_raw_insert
 from src.database_manager.query_builders import build_insert_query
+from src.database_manager.query_execution import (
+    execute_pandas_insert,
+    execute_raw_insert,
+)
 
 from .test_utils import delete_env_variables
 
 MAX_INSERT_LIMIT = 80000
 TABLE_NAME = "test"
+DATABASE = "Sandbox"
 
 
 def test_valid_raw_insert_for_single_insert():
@@ -36,6 +42,19 @@ def test_valid_raw_insert_for_bulk_insert():
     execute_raw_insert(sql, insert_type=InsertType.BULK_INSERT)
 
 
+def test_valid_raw_insert_with_param_db():
+    """Tests the execute_raw_insert() function with database parameter."""
+    delete_env_variables()
+    os.environ["DATABASE"] = ""
+    sql = build_insert_query(TABLE_NAME, ["id", "val"], [(1, "Adam"), (2, "Bob")])
+
+    assert sql is not None
+    assert sql != ""
+    assert sql != " "
+
+    execute_raw_insert(sql, database=DATABASE, insert_type=InsertType.BULK_INSERT)
+
+
 def test_invalid_insert_type_for_raw_insert():
     """Tests the execute_raw_insert() function for invalid insert type."""
     delete_env_variables()
@@ -48,7 +67,7 @@ def test_invalid_insert_type_for_raw_insert():
     with pytest.raises(
         ValueError, match="Insert type parameter given is not of type InsertType"
     ):
-        execute_raw_insert(sql, "invalid insert type")
+        execute_raw_insert(sql, insert_type="invalid insert type")
 
 
 def test_invalid_custom_sql_for_raw_insert():
@@ -73,8 +92,8 @@ def test_valid_raw_insert_for_single_insert_with_custom_sql():
     execute_raw_insert(sql, insert_type=InsertType.SINGLE_INSERT)
 
 
-def test_valid_pandas_insert():
-    """Tests the execute_pandas_insert() function."""
+def test_valid_pandas_insert_with_env_var_database():
+    """Tests the execute_pandas_insert() function with database environment variable."""
     delete_env_variables()
     data_frame = pd.DataFrame({"id": [1, 2, 3], "val": ["Adam", "Bob", "Charlie"]})
 
@@ -82,6 +101,18 @@ def test_valid_pandas_insert():
     assert not data_frame.empty
 
     execute_pandas_insert(TABLE_NAME, data_frame)
+
+
+def test_valid_pandas_insert_with_param_db():
+    """Tests the execute_pandas_insert() function with database parameter."""
+    delete_env_variables()
+    os.environ["DATABASE"] = ""
+    data_frame = pd.DataFrame({"id": [1, 2, 3], "val": ["Adam", "Bob", "Charlie"]})
+
+    assert data_frame is not None
+    assert not data_frame.empty
+
+    execute_pandas_insert(TABLE_NAME, data_frame, database=DATABASE)
 
 
 def test_pandas_insert_for_exceeding_dataframe_size():

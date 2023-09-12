@@ -3,18 +3,14 @@ import os
 
 import pytest
 
-from ..execute_query import (
+from ..query_builders import build_select_query
+from ..query_execution import (
     execute_pandas_select,
     execute_raw_select,
     validate_engine,
     validate_sql,
 )
-from ..query_builders import build_select_query
 from .test_utils import delete_env_variables
-
-"""TODO:
-- test that our exceptions will be thrown as expected
-"""
 
 
 def test_sql_raw_select():

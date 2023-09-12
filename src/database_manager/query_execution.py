@@ -1,8 +1,4 @@
-"""Execute Queries module.
-
-Each function is a different way to execute a SQL query using SQLAlchemy.
-For each SQL operation we offer a pandas function and a raw function
-"""
+"""Execute Queries module."""
 
 import pandas as pd
 from sqlalchemy import Engine, text
@@ -10,9 +6,6 @@ from sqlalchemy.orm import sessionmaker
 
 from .connection_manager import InsertType, create_engine
 
-""" TODO:
-    - Add logging
-"""
 MAX_INSERT_LIMIT = 80000
 
 
@@ -78,7 +71,7 @@ def validate_sql(sql: str) -> None:
         raise ValueError("SQL is whitespace")
 
 
-def execute_raw_select(sql: str, database: str = None) -> list[tuple]:
+def execute_raw_select(sql: str, database: str | None = None) -> list[tuple]:
     """Create an engine and execute a SQL select operation using SQLAlchemy, returning a list of tuples.
 
     Arguments:
@@ -101,7 +94,6 @@ def execute_raw_select(sql: str, database: str = None) -> list[tuple]:
         sql = build_select_query(table, top=10, cols=["id", "name"])
         results = execute_raw_select(sql)
         ```
-
     """
     engine = create_engine(database=database)
 
@@ -116,7 +108,7 @@ def execute_raw_select(sql: str, database: str = None) -> list[tuple]:
 
 def execute_pandas_select(
     sql: str,
-    database: str = None,
+    database: str | None = None,
 ) -> pd.DataFrame:
     """Create an engine and execute a SQL select operation using SQLAlchemy.
 
@@ -151,14 +143,16 @@ def execute_pandas_select(
 
 
 def execute_raw_insert(
-    sql: str, insert_type: InsertType = InsertType.BULK_INSERT, database: str = None
+    sql: str,
+    database: str | None = None,
+    insert_type: InsertType = InsertType.BULK_INSERT,
 ) -> None:
     """Create an engine and execute a SQL insert operation using SQLAlchemy.
 
     Arguments:
         sql (str): SQL query to execute.
-        insert_type (InsertType, optional): Type of insert operation to execute. Defaults to InsertType.BULK_INSERT.
         database (str, optional): Database to connect to. Defaults to None. Can be set as an environment variable.
+        insert_type (InsertType, optional): Type of insert operation to execute. Defaults to InsertType.BULK_INSERT.
 
     Raises:
         ValueError: If insert_type is not of type InsertType.
@@ -197,7 +191,7 @@ def execute_raw_insert(
 
 
 def execute_pandas_insert(
-    table: str, data_frame: pd.DataFrame, database: str = None
+    table: str, data_frame: pd.DataFrame, database: str | None = None
 ) -> None:
     """Create an engine and execute a SQL insert operation using SQLAlchemy.
 
