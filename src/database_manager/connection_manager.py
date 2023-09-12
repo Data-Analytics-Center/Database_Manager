@@ -1,81 +1,81 @@
-"""Contains database connection and execution logic."""
+"""Contains database connection logic."""
 
+from enum import Enum
+import os
+import urllib.parse
+
+from dotenv import load_dotenv
 from sqlalchemy import create_engine as sqlalchemy_create_engine
-from sqlalchemy import engine
+from sqlalchemy import Engine
 
 
-def create_engine(
-    server: str, database: list, driver: str, bulk_insert: bool  # noqa: FBT001
-) -> engine:
+class InsertType(Enum):
+    """Enum to define the type of engine to create.
+
+    Attributes:
+        BULK_INSERT (int): Engine is for bulk inserts only.
+        SINGLE_INSERT (int): Engine is for single inserts only.
+    """
+    
+    BULK_INSERT = 1
+    SINGLE_INSERT = 2
+
+
+def create_engine(insert_type: InsertType = None) -> Engine: 
     """Create a connection object to a database.
 
-    This function creates a SQLAlchemy engine connection object to a database.
+    This function creates a SQLAlchemy Engine connection object to a database.
     It relies on environment variables for the connection parameters,
     including the driver, server, database, and environment type.
 
     Arguments:
-        driver: The driver that connects to the database.
-        server: The name of the database server.
-        database: The database to connect to.
-        bulk_insert: True if engine is for bulk inserts only
+        insert_type: True if Engine is for bulk inserts only
+
+    Environment Variables:
+        driver (str): The driver that connects to the database.
+        server (str): The name of the database server.
+        database (str): The database to connect to.
 
     Returns:
-        Connection: A SQLAlchemy engine connection object.
+        engine (Engine): A SQLAlchemy Engine object.
 
     Raises:
-        ValueError: If any of the parameters are empty or not set.
+        ValueError: If any of the environment variables are not set properly.
 
     Example:
         To use this function, set the environment variables and then call `create_connection()`:
         ```python
-        import os
-        os.environ['DATABASE'] = 'my_database'
-        os.environ['development_DRIVER'] = 'ODBC Driver 17 for SQL Server'
-        os.environ['development_SERVER'] = 'my_server_address'
-
-        connection = create_connection(server, database, driver)
+        engine = create_engine()
         ```
     """
-    if database is None or database == "":
-        raise ValueError("Database parameter cannot be None or empty.")
-    if driver is None or driver == "":
-        raise ValueError("Driver parameter cannot be None or empty.")
-    if server is None or server == "":
-        raise ValueError("Server parameter cannot be None or empty.")
+    load_dotenv()
 
-    connection_string = (
-        f"mssql+pyodbc://@{server}/{database}?driver={driver}&Encrypt=no"
+    server = os.getenv("SERVER")
+    database = os.getenv("DATABASE")
+    driver = os.getenv("DRIVER")
+
+    if database is None or database == "" or database.isspace():
+        raise ValueError("Database environment variable is not properly set.")
+    if driver is None or driver == "" or driver.isspace():
+        raise ValueError("Driver environment variable is not properly set.")
+    if server is None or server == "" or server.isspace():
+        raise ValueError("Server environment variable is not properly set.")
+
+    env_type = os.getenv("ENV_TYPE")
+
+    if env_type == "PROD":
+        uid = os.getenv("UID")
+        pid = os.getenv("PID")
+        connection_string = (
+	f"mssql+pyodbc://{uid}:{urllib.parse.quote_plus(pid)}@{server}/{database}?driver={urllib.parse.quote_plus(driver)}&Encrypt=no"
     )
-    engine = (
-        sqlalchemy_create_engine(connection_string, fast_executemany=True)
-        if bulk_insert
-        else sqlalchemy_create_engine(connection_string)
-    )
+    else:
+        connection_string = (
+            f"mssql+pyodbc://@{server}/{database}?driver={driver}&Encrypt=no"
+        )
+
+    if insert_type == InsertType.BULK_INSERT:
+        engine = sqlalchemy_create_engine(connection_string, fast_executemany=True)
+    else:
+        engine = sqlalchemy_create_engine(connection_string)
     return engine
-
-
-def execute_query(engine: engine, query: str, values: tuple[any, ...] = None) -> None:
-    """Execute an SQL query.
-
-    Arguments:
-        engine: The engine object to connect to the database.
-        query: The query to execute.
-        values: The values to pass to the query if any.
-
-    Returns:
-        last_id: The id of the last row inserted.
-
-    Raises:
-        Exception: If anything goes wrong with the database transaction.
-        ValueError: If the engine or query is not set.
-    """
-    if engine is None:
-        raise ValueError("Engine cannot be None.")
-    if query is None or query == "":
-        raise ValueError("Query cannot be None or empty.")
-
-    with engine.begin() as connection:
-        if values:
-            connection.execute(query, values)
-        else:
-            connection.execute(query)

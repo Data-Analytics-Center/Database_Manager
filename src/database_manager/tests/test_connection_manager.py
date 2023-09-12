@@ -3,31 +3,44 @@
 import os
 
 import pytest
-from dotenv import load_dotenv
+from sqlalchemy import Engine
 
 from ..connection_manager import create_engine
-
-
-load_dotenv()
-
-DRIVER = os.getenv("DRIVER")
-SERVER = os.getenv("SERVER")
-DATABASE = os.getenv("DATABASE")
+from .test_utils import delete_env_variables
 
 
 def test_valid_engine_test():
     """Test a valid engine is created."""
-    engine = create_engine(SERVER, DATABASE, DRIVER, bulk_insert=False)
+    engine = create_engine()
     assert engine is not None
+    assert isinstance(engine, Engine)
 
 
-def test_missing_engine_parameters():
-    """Test invalid engine parameters raise an exception."""
-    with pytest.raises(ValueError, match="Server parameter cannot be None or empty."):
-        create_engine(None, DATABASE, DRIVER, bulk_insert=False)
+def test_engine_missing_server():
+    """Test creating engine with missing server environment variable."""
+    delete_env_variables()
+    os.environ["SERVER"] = ""
+    with pytest.raises(
+        ValueError, match=r"Server environment variable is not properly set."
+    ):
+        create_engine()
 
-    with pytest.raises(ValueError, match="Database parameter cannot be None or empty."):
-        create_engine(SERVER, None, DRIVER, bulk_insert=False)
 
-    with pytest.raises(ValueError, match="Driver parameter cannot be None or empty."):
-        create_engine(SERVER, DATABASE, None, bulk_insert=False)
+def test_engine_missing_database():
+    """Test creating engine with missing database environment variable."""
+    delete_env_variables()
+    os.environ["DATABASE"] = ""
+    with pytest.raises(
+        ValueError, match=r"Database environment variable is not properly set."
+    ):
+        create_engine()
+
+
+def test_engine_missing_driver():
+    """Test creating engine with missing driver environment variable."""
+    delete_env_variables()
+    os.environ["DRIVER"] = ""
+    with pytest.raises(
+        ValueError, match=r"Driver environment variable is not properly set."
+    ):
+        create_engine()
