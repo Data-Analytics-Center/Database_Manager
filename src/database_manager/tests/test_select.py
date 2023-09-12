@@ -1,15 +1,16 @@
 """Test the select function."""
+import os
+
+import pytest
 
 from ..execute_query import (
-    execute_raw_select,
     execute_pandas_select,
+    execute_raw_select,
     validate_engine,
     validate_sql,
 )
 from ..query_builders import build_select_query
 from .test_utils import delete_env_variables
-
-import pytest
 
 """TODO:
 - test that our exceptions will be thrown as expected
@@ -87,3 +88,17 @@ def test_execute_pandas_select_invalid_sql():
     delete_env_variables()
     with pytest.raises(ValueError, match="SQL is whitespace"):
         execute_pandas_select(" ")
+
+
+def test_execute_pandas_select_database_param():
+    """Test that an invalid SQL query is rejected for a pandas select."""
+    delete_env_variables()
+    os.environ["DATABASE"] = ""
+    execute_pandas_select("SELECT * FROM test_select", database="Sandbox")
+
+
+def test_execute_raw_select_database_param():
+    """Test that an invalid SQL query is rejected for a pandas select."""
+    delete_env_variables()
+    os.environ["DATABASE"] = ""
+    execute_raw_select("SELECT * FROM test_select", database="Sandbox")

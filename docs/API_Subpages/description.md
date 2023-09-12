@@ -2,12 +2,45 @@
 
 ## Overview
 
+### Goals
+
 Database-Manager is an abstraction on top of python database packages meant to accomplish the following goals:
 
 - create a simple API to do common DB tasks such as selecting data and inserting data
-- serve as an adapter between our applications & third party libraries to facilitate any future underlying library changes (motivated by us switching from pyodbc to sqlalchemy)
-- abstract away the troublesome logic of writing out the workaround code to execute raw custom SQL instead of using built in ORM features
+- serve as an adapter between our applications & third party database libraries to facilitate any future underlying library changes (motivated by us switching from pyodbc to sqlalchemy)
 - create a unified database library to use across all DAC applications
+
+### Structure
+
+The package currently contains 2 main modules:
+
+- Query Builders: functions to build SQL queries for you based on the parameters you pass in
+- Query Executors: functions to execute SQL queries for you
+
+!!! tip "Enviroment Variables"
+
+    **Always Required**
+
+    ***ENV_TYPE:*** used to determine the environment, can be either `DEV` or `PROD` 
+
+    ***SERVER:*** the server to connect to
+
+    ***DRIVER:*** the driver used to connect to the database
+
+    --------------------------------------------
+
+    **Optional**
+
+    ***DATABASE:*** the database to connect to (can be set as environment variable or passed in as a parameter)
+
+    --------------------------------------------
+
+    **Production Only**
+
+    ***UID:*** the username of the user to connect as
+
+    ***PID:*** the password of the user to connect as
+
 
 ## Some Code Examples
 
