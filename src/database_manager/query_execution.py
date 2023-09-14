@@ -6,8 +6,6 @@ from sqlalchemy.orm import sessionmaker
 
 from .connection_manager import InsertType, create_engine
 
-MAX_INSERT_LIMIT = 80000
-
 
 def validate_engine(engine: Engine) -> None:
     """Validate an engine object was initialized properly.
@@ -191,7 +189,10 @@ def execute_raw_insert(
 
 
 def execute_pandas_insert(
-    table: str, data_frame: pd.DataFrame, database: str | None = None
+    table: str,
+    data_frame: pd.DataFrame,
+    database: str | None = None,
+    chunksize: int = 10000,
 ) -> None:
     """Create an engine and execute a SQL insert operation using SQLAlchemy.
 
@@ -199,6 +200,7 @@ def execute_pandas_insert(
         table (str): Table to insert into.
         data_frame (pd.DataFrame): DataFrame to insert into the database.
         database (str, optional): Database to connect to. Defaults to None. Can be set as an environment variable.
+        chunksize (int, optional): Number of rows to insert at a time. Defaults to 10000.
 
     Raises:
         ValueError: If table is None.
@@ -227,9 +229,6 @@ def execute_pandas_insert(
 
     if not isinstance(data_frame, pd.DataFrame):
         raise ValueError("Dataframe is not of type pd.DataFrame")
-
-    if len(data_frame) > MAX_INSERT_LIMIT:
-        raise ValueError("Dataframe size exceeds the maximum insert limit")
 
     if data_frame.empty:
         raise ValueError("Dataframe is empty")

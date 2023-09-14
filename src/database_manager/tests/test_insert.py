@@ -124,23 +124,6 @@ def test_valid_pandas_insert_with_param_db():
     execute_pandas_insert(TABLE_NAME, data_frame, database=DATABASE)
 
 
-def test_pandas_insert_for_exceeding_dataframe_size():
-    """Tests the execute_pandas_insert() function for exceeding dataframe size."""
-    delete_env_variables()
-    ids = list(range(MAX_INSERT_LIMIT + 1))
-    vals = [f"val_{i}" for i in range(MAX_INSERT_LIMIT + 1)]
-
-    data_frame = pd.DataFrame({"id": ids, "val": vals})
-
-    assert data_frame is not None
-    assert not data_frame.empty
-
-    with pytest.raises(
-        ValueError, match="Dataframe size exceeds the maximum insert limit"
-    ):
-        execute_pandas_insert(TABLE_NAME, data_frame)
-
-
 def test_pandas_insert_for_empty_dataframe():
     """Tests the execute_pandas_insert() function for empty dataframe."""
     data_frame = pd.DataFrame()
