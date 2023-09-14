@@ -29,7 +29,7 @@ def test_sql_select_pandas():
     """Test a valid pandas select is executed."""
     delete_env_variables()
     table = "test_select"
-    sql = build_select_query(table, 10, ["id", "name"])
+    sql = build_select_query(table=table, top=10, columns=["id", "name"])
     assert sql is not None
     assert sql != ""
     assert sql != " "

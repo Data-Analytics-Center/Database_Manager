@@ -16,12 +16,15 @@ from .test_utils import delete_env_variables
 MAX_INSERT_LIMIT = 80000
 TABLE_NAME = "test"
 DATABASE = "Sandbox"
+SCHEMA = "dbo"
 
 
 def test_valid_raw_insert_for_single_insert():
     """Tests the execute_raw_insert() function for single insert."""
     delete_env_variables()
-    sql = build_insert_query(TABLE_NAME, ["id", "val"], [(1, "Adam")])
+    sql = build_insert_query(
+        TABLE_NAME, ["id", "val"], [(1, "Adam")], database=DATABASE, schema=SCHEMA
+    )
 
     assert sql is not None
     assert sql != ""
@@ -33,7 +36,13 @@ def test_valid_raw_insert_for_single_insert():
 def test_valid_raw_insert_for_bulk_insert():
     """Tests the execute_raw_insert() function for bulk insert."""
     delete_env_variables()
-    sql = build_insert_query(TABLE_NAME, ["id", "val"], [(1, "Adam"), (2, "Bob")])
+    sql = build_insert_query(
+        TABLE_NAME,
+        ["id", "val"],
+        [(1, "Adam"), (2, "Bob")],
+        database=DATABASE,
+        schema=SCHEMA,
+    )
 
     assert sql is not None
     assert sql != ""

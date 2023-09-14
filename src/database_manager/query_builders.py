@@ -1,10 +1,15 @@
 """Query Builders module contains functions to build SQL queries."""
+import os
+
+from dotenv import load_dotenv
 
 MAX_INSERT_LIMIT = 80000
 
 
 def build_select_query(
     table: str,
+    database: str = None,
+    schema: str = "dbo",
     top: int = None,
     columns: list = ["*"],
     where: str = None,
@@ -15,6 +20,8 @@ def build_select_query(
 
     Arguments:
         table (str): Table to select from.
+        database (str, optional): Database to connect to. Defaults to None. Can be set as an environment variable.
+        schema (str, optional): Schema to connect to. Defaults to "dbo".
         top (int, optional): Number of rows to select. Defaults selecting all rows.
         columns (list, optional): List of columns to select. Defaults to ["*"].
         where (str, optional): Where clause. Defaults to None.
@@ -38,12 +45,15 @@ def build_select_query(
         )
         ```
     """
+    load_dotenv()
+
     if not table or table.isspace():
         raise ValueError("Table name is required.")
 
-    sql_query = (
-        f"""SELECT {f"TOP {top} " if top else ""}{", ".join(columns)} FROM {table}"""
-    )
+    if database is None or database == "" or database.isspace():
+        database = os.getenv("DATABASE")
+
+    sql_query = f"""SELECT {f"TOP {top} " if top else ""}{", ".join(columns)} FROM {database}.{schema}.{table}"""
 
     if where is not None:
         sql_query += f" WHERE {where}"
@@ -57,13 +67,21 @@ def build_select_query(
     return sql_query
 
 
-def build_insert_query(table: str, columns: list, data_rows: list[tuple]) -> str:
+def build_insert_query(
+    table: str,
+    columns: list,
+    data_rows: list[tuple],
+    database: str = None,
+    schema: str = "dbo",
+) -> str:
     """Build an insert query.
 
     Arguments:
         table (str): Table to insert into.
         columns (list): List of columns to insert into.
         data_rows (list[tuple]): List of values to insert where each tuple represents a row.
+        database (str, optional): Database to connect to. Defaults to None. Can be set as an environment variable.
+        schema (str, optional): Schema to connect to. Defaults to "dbo".
 
     Raises:
         Exception: If table name is not provided.
@@ -95,6 +113,9 @@ def build_insert_query(table: str, columns: list, data_rows: list[tuple]) -> str
             f"Number of values exceeds the maximum limit of {MAX_INSERT_LIMIT}"
         )
 
+    if database is None or database == "" or database.isspace():
+        database = os.getenv("DATABASE")
+
     modified_data_rows = []
     for row in data_rows:
         if len(columns) != len(row):
@@ -104,12 +125,11 @@ def build_insert_query(table: str, columns: list, data_rows: list[tuple]) -> str
         new_row = []
         for i in range(len(row)):
             if isinstance(row[i], str):
-                new_row.append(f'{row[i]}')
+                new_row.append(f"{row[i]}")
             else:
                 new_row.append(row[i])
-        modified_data_rows.append(
-            str(new_row).replace("[", "(").replace("]", ")"))
+        modified_data_rows.append(str(new_row).replace("[", "(").replace("]", ")"))
 
-    sql_query = f"""INSERT INTO {table} ({", ".join(columns)}) VALUES {', '.join(modified_data_rows)};"""
+    sql_query = f"""INSERT INTO {database}.{schema}.{table} ({", ".join(columns)}) VALUES {', '.join(modified_data_rows)};"""  # noqa: E501
 
     return sql_query
