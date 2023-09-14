@@ -3,8 +3,6 @@ import os
 
 from dotenv import load_dotenv
 
-MAX_INSERT_LIMIT = 80000
-
 
 def build_select_query(
     table: str,
@@ -53,7 +51,7 @@ def build_select_query(
     if database is None or database == "" or database.isspace():
         database = os.getenv("DATABASE")
 
-    sql_query = f"""SELECT {f"TOP {top} " if top else ""}{", ".join(columns)} FROM {database}.{schema}.{table}"""
+    sql_query = f"""SELECT {f"TOP {top} " if top else ""}{", ".join(columns)} FROM [{database}].[{schema}].[{table}]"""
 
     if where is not None:
         sql_query += f" WHERE {where}"
@@ -108,11 +106,6 @@ def build_insert_query(
     if not columns:
         raise ValueError("At least one column is required!")
 
-    if len(data_rows) > MAX_INSERT_LIMIT:
-        raise ValueError(
-            f"Number of values exceeds the maximum limit of {MAX_INSERT_LIMIT}"
-        )
-
     if database is None or database == "" or database.isspace():
         database = os.getenv("DATABASE")
 
@@ -130,6 +123,6 @@ def build_insert_query(
                 new_row.append(row[i])
         modified_data_rows.append(str(new_row).replace("[", "(").replace("]", ")"))
 
-    sql_query = f"""INSERT INTO {database}.{schema}.{table} ({", ".join(columns)}) VALUES {', '.join(modified_data_rows)};"""  # noqa: E501
+    sql_query = f"""INSERT INTO [{database}].[{schema}].[{table}] ({", ".join(columns)}) VALUES {', '.join(modified_data_rows)};"""  # noqa: E501
 
     return sql_query

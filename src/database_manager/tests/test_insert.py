@@ -54,8 +54,10 @@ def test_valid_raw_insert_for_bulk_insert():
 def test_valid_raw_insert_with_param_db():
     """Tests the execute_raw_insert() function with database parameter."""
     delete_env_variables()
-    os.environ["DATABASE"] = ""
-    sql = build_insert_query(TABLE_NAME, ["id", "val"], [(1, "Adam"), (2, "Bob")])
+    database = "Sandbox"
+    sql = build_insert_query(
+        TABLE_NAME, ["id", "val"], [(1, "Adam"), (2, "Bob")], database=database
+    )
 
     assert sql is not None
     assert sql != ""

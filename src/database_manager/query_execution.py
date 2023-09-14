@@ -192,7 +192,6 @@ def execute_pandas_insert(
     table: str,
     data_frame: pd.DataFrame,
     database: str | None = None,
-    chunksize: int = 10000,
 ) -> None:
     """Create an engine and execute a SQL insert operation using SQLAlchemy.
 
