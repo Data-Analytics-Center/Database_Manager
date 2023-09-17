@@ -1,26 +1,19 @@
 """test.py."""
 
+import pandas as pd
+
 from src.database_manager.connection_manager import ReturnLastID
-from src.database_manager.query_builders import build_insert_query
-from src.database_manager.query_execution import (
-    execute_pandas_insert,
-    execute_raw_insert,
-)
+
+# from src.database_manager.query_builders import build_insert_query
+from src.database_manager.query_execution import execute_pandas_insert
 
 
 def main():
     """Main function."""  # noqa: D401
     table = "test"
-    schema = "jgj891"
-    cols = ["id", "val"]
-    values = [[1, "John"], [2, "Jane"]]
-    sql = build_insert_query(table, cols, values, schema=schema)
-    # print(sql)
-    last_id = execute_raw_insert(sql)
+    dataframe = pd.DataFrame({"id": [1, 2, 3], "val": ["Adam", "Bob", "Charlie"]})
+    last_id = execute_pandas_insert(table, dataframe, return_id=ReturnLastID.TRUE)
     print(last_id)
-
-    # data_frame = pd.DataFrame(values, columns=cols)
-    # execute_pandas_insert(data_frame, table)
 
 
 if __name__ == "__main__":
