@@ -266,4 +266,4 @@ def execute_pandas_insert(
         with session_initializer() as session:
             last_id = (session.execute(text("SELECT SCOPE_IDENTITY()"))).fetchone()
             session.commit()
-    return last_id
+        return last_id

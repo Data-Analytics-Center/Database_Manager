@@ -153,3 +153,15 @@ def test_pandas_insert_for_invalid_table_name():
     for table_name in table_names:
         with pytest.raises(ValueError, match="Table name is None"):
             execute_pandas_insert(table_name, data_frame)
+
+
+def test_pandas_insert_for_invalid_schema():
+    """Tests the execute_pandas_insert() function for invalid schema."""
+    schema = None
+    data_frame = pd.DataFrame({"id": [1, 2, 3], "val": ["Adam", "Bob", "Charlie"]})
+
+    assert data_frame is not None
+    assert not data_frame.empty
+
+    with pytest.raises(ValueError, match="Schema name is invalid"):
+        execute_pandas_insert(TABLE_NAME, data_frame, schema=schema)

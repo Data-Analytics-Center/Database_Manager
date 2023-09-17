@@ -12,7 +12,7 @@ def main():
     """Main function."""  # noqa: D401
     table = "test"
     dataframe = pd.DataFrame({"id": [1, 2, 3], "val": ["Adam", "Bob", "Charlie"]})
-    last_id = execute_pandas_insert(table, dataframe, return_id=ReturnLastID.TRUE)
+    last_id = execute_pandas_insert(table, dataframe, return_id=ReturnLastID.FALSE)
     print(last_id)
 
 
