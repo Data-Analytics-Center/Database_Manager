@@ -4,7 +4,7 @@ import pandas as pd
 from sqlalchemy import Engine, text
 from sqlalchemy.orm import sessionmaker
 
-from .connection_manager import InsertType, create_engine
+from .connection_manager import InsertType, ReturnLastID, create_engine
 
 
 def validate_engine(engine: Engine) -> None:
@@ -144,19 +144,21 @@ def execute_raw_insert(
     sql: str,
     database: str | None = None,
     insert_type: InsertType = InsertType.BULK_INSERT,
-) -> None:
+    return_id: ReturnLastID = ReturnLastID.FALSE,
+) -> None | tuple:
     """Create an engine and execute a SQL insert operation using SQLAlchemy.
 
     Arguments:
         sql (str): SQL query to execute.
         database (str, optional): Database to connect to. Defaults to None. Can be set as an environment variable.
         insert_type (InsertType, optional): Type of insert operation to execute. Defaults to InsertType.BULK_INSERT.
+        return_id (ReturnLastID, optional): Whether or not to return the last inserted ID. Defaults to ReturnLastID.FALSE.
 
     Raises:
         ValueError: If insert_type is not of type InsertType.
 
     Returns:
-        None
+        None | tuple: If return_id is ReturnLastID.TRUE, returns the last inserted ID.
 
     Examples:
         To use this function with a custom sql query:
@@ -185,7 +187,11 @@ def execute_raw_insert(
     session_initializer = sessionmaker(bind=engine)
     with session_initializer() as session:
         session.execute(text(sql))
+        last_id = None
+        if return_id == ReturnLastID.TRUE:
+            last_id = (session.execute(text("SELECT SCOPE_IDENTITY()"))).fetchone()
         session.commit()
+        return last_id
 
 
 def execute_pandas_insert(
