@@ -17,6 +17,7 @@ TABLE_NAME = "db_manager_tests"
 
 def test_sql_raw_select():
     """Test a valid raw select is executed."""
+    delete_env_variables()
     sql = build_select_query(TABLE_NAME, top=10, columns=["id", "value"])
     assert sql is not None
     assert sql != ""

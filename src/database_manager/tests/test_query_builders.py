@@ -201,3 +201,13 @@ def test_values_not_provided():
     """Test that the function raises TypeError when values to be inserted are not provided."""
     with pytest.raises(TypeError):
         build_insert_query(TABLE_NAME, ["Id", "Value"])
+
+
+def test_build_select_query_for_no_db_name():
+    """Test that the function raises ValueError when database name is not provided and is not set as an environment variable."""  # noqa: E501
+    os.environ["DATABASE"] = ""
+    with pytest.raises(
+        ValueError,
+        match="Database name is required to build a query. Pass as an argument or set as an environment variable.",
+    ):
+        build_select_query(table=TABLE_NAME, columns=["Id", "Value"])
