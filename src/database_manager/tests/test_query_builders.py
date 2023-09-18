@@ -153,6 +153,19 @@ def test_build_insert_query_column_mismatch():
         build_insert_query(TABLE_NAME, ["Id", "Value"], [(1, "Value1"), (2,)])
 
 
+def test_build_insert_query_single_insert():
+    """Test if the function returns the correct query when the database and schema parameter is provided as argument."""
+    sql_query = build_insert_query(
+        table=TABLE_NAME,
+        columns=["Id", "Value"],
+        data_rows=[(1, "Value1")],
+        database="test",
+        schema="dbo",
+    )
+    expected_query = f"INSERT INTO [test].[dbo].[{TABLE_NAME}] (Id, Value) VALUES (1, 'Value1');"  # noqa: E501
+    assert sql_query == expected_query
+
+
 def test_build_insert_query_with_param_db_and_schema():
     """Test if the function returns the correct query when the database and schema parameter is provided as argument."""
     sql_query = build_insert_query(
