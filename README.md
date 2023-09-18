@@ -20,7 +20,7 @@ Database-Manager is an abstraction on top of python database packages meant to a
 
 2. Save the token somewhere secure and do not share it with anyone. You will not be able to view the token again so make sure you copy and save it.
 
-#### Use the following link to install the package into your pipenv environment (assuming you have the environment created)- 
+#### Use the following link to install the package into your pipenv environment - 
 
 `pipenv install git+https://<ACCESS_TOKEN>@github.com/Data-Analytics-Center/Database_Manager.git#egg=Database_Manager`
 
