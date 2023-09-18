@@ -1,5 +1,4 @@
 """Tests the insert functions."""
-import os
 
 import pandas as pd
 import pytest
@@ -67,7 +66,6 @@ def test_valid_raw_insert_with_param_db():
 
 def test_invalid_insert_type_for_raw_insert():
     """Tests the execute_raw_insert() function for invalid insert type."""
-    delete_env_variables()
     sql = build_insert_query(TABLE_NAME, ["id", "value"], [(1, "Adam")])
 
     assert sql is not None
@@ -116,7 +114,6 @@ def test_valid_pandas_insert_with_env_var_database():
 def test_valid_pandas_insert_with_param_db():
     """Tests the execute_pandas_insert() function with database parameter."""
     delete_env_variables()
-    os.environ["DATABASE"] = ""
     data_frame = pd.DataFrame({"id": [1, 2, 3], "value": ["Adam", "Bob", "Charlie"]})
 
     assert data_frame is not None

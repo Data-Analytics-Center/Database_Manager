@@ -27,7 +27,8 @@ def build_select_query(
         order_by (str, optional): Order by clause. Defaults to None.
 
     Raises:
-        Exception: If table name is not provided.
+        ValueError: If table name is not provided.
+        ValueError: If database name is not provided and is not set as an environment variable.
 
     Returns:
         sql_query (str): A select query.
@@ -49,6 +50,10 @@ def build_select_query(
         raise ValueError("Table name is required.")
 
     if database is None or database == "" or database.isspace():
+        if not os.getenv("DATABASE"):
+            raise ValueError(
+                "Database name is required to build a query. Pass as an argument or set as an environment variable."
+            )
         database = os.getenv("DATABASE")
 
     sql_query = f"""SELECT {f"TOP {top} " if top else ""}{", ".join(columns)} FROM [{database}].[{schema}].[{table}]"""
@@ -82,10 +87,11 @@ def build_insert_query(
         schema (str, optional): Schema to connect to. Defaults to "dbo".
 
     Raises:
-        Exception: If table name is not provided.
-        Exception: If columns list is not provided.
-        Exception: If number of values exceeds the maximum insert limit.
-        Exception: If number of columns does not match the number of args provided.
+        ValueError: If table name is not provided.
+        ValueError: If columns list is not provided.
+        ValueError: If number of values exceeds the maximum insert limit.
+        ValueError: If number of columns does not match the number of args provided.
+        ValueError: If database name is not provided and is not set as an environment variable.
 
     Returns:
         sql_query (str): An insert query.
@@ -107,6 +113,10 @@ def build_insert_query(
         raise ValueError("At least one column is required!")
 
     if database is None or database == "" or database.isspace():
+        if not os.getenv("DATABASE"):
+            raise ValueError(
+                "Database name is required to build a query. Pass as an argument or set as an environment variable."
+            )
         database = os.getenv("DATABASE")
 
     modified_data_rows = []

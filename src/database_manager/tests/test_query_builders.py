@@ -9,6 +9,7 @@ from src.database_manager.query_builders import build_insert_query, build_select
 from src.database_manager.tests.test_utils import delete_env_variables
 
 TABLE_NAME = "db_manager_tests"
+DATABASE = "test"
 
 
 def test_build_select_query_invalid_table():
@@ -31,10 +32,8 @@ def test_build_select_query_no_table():
 
 def test_build_select_query_default_args():
     """Test that the function returns the correct query with default values, when no args are provided."""
-    load_dotenv()
-    database = os.getenv("DATABASE")
     sql_query = build_select_query(table=TABLE_NAME)
-    expected_query = f"SELECT * FROM [{database}].[dbo].[{TABLE_NAME}]"
+    expected_query = f"SELECT * FROM [{DATABASE}].[dbo].[{TABLE_NAME}]"
     assert sql_query == expected_query
 
 
