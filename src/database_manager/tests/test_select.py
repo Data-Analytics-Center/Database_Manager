@@ -12,11 +12,12 @@ from ..query_execution import (
 )
 from .test_utils import delete_env_variables
 
+TABLE_NAME = "db_manager_tests"
+
 
 def test_sql_raw_select():
     """Test a valid raw select is executed."""
-    table = "test_select"
-    sql = build_select_query(table, top=10, columns=["id", "name"])
+    sql = build_select_query(TABLE_NAME, top=10, columns=["id", "value"])
     assert sql is not None
     assert sql != ""
     assert sql != " "
@@ -28,8 +29,7 @@ def test_sql_raw_select():
 def test_sql_select_pandas():
     """Test a valid pandas select is executed."""
     delete_env_variables()
-    table = "test_select"
-    sql = build_select_query(table=table, top=10, columns=["id", "name"])
+    sql = build_select_query(TABLE_NAME, top=10, columns=["id", "value"])
     assert sql is not None
     assert sql != ""
     assert sql != " "
@@ -90,11 +90,11 @@ def test_execute_pandas_select_database_param():
     """Test that an invalid SQL query is rejected for a pandas select."""
     delete_env_variables()
     os.environ["DATABASE"] = ""
-    execute_pandas_select("SELECT * FROM test_select", database="test")
+    execute_pandas_select(f"SELECT * FROM {TABLE_NAME}", database="test")
 
 
 def test_execute_raw_select_database_param():
     """Test that an invalid SQL query is rejected for a pandas select."""
     delete_env_variables()
     os.environ["DATABASE"] = ""
-    execute_raw_select("SELECT * FROM test_select", database="test")
+    execute_raw_select(f"SELECT * FROM {TABLE_NAME}", database="test")
