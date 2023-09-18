@@ -4,7 +4,7 @@ import pandas as pd
 from sqlalchemy import Engine, text
 from sqlalchemy.orm import sessionmaker
 
-from .connection_manager import InsertType, ReturnLastID, create_engine
+from .connection_manager import InsertType, create_engine
 
 
 def validate_engine(engine: Engine) -> None:
@@ -144,22 +144,19 @@ def execute_raw_insert(
     sql: str,
     database: str | None = None,
     insert_type: InsertType = InsertType.BULK_INSERT,
-    return_id: ReturnLastID = ReturnLastID.FALSE,
-) -> None | tuple:
+) -> None:
     """Create an engine and execute a SQL insert operation using SQLAlchemy.
 
     Arguments:
         sql (str): SQL query to execute.
         database (str, optional): Database to connect to. Defaults to None. Can be set as an environment variable.
         insert_type (InsertType, optional): Type of insert operation to execute. Defaults to InsertType.BULK_INSERT.
-        return_id (ReturnLastID, optional): Whether or not to return the last inserted ID. Defaults to ReturnLastID.FALSE.
 
     Raises:
         ValueError: If insert_type is not of type InsertType.
-        ValueError: If return_id is not of type ReturnLastID.
 
     Returns:
-        None | tuple: If return_id is ReturnLastID.TRUE, returns the last inserted ID.
+        None
 
     Examples:
         To use this function with a custom sql query:
@@ -180,9 +177,6 @@ def execute_raw_insert(
     if not isinstance(insert_type, InsertType):
         raise ValueError("Insert type parameter given is not of type InsertType")
 
-    if not isinstance(return_id, ReturnLastID):
-        raise ValueError("Return ID parameter given is not of type ReturnLastID")
-
     validate_sql(sql)
 
     engine = create_engine(database, insert_type)
@@ -191,11 +185,7 @@ def execute_raw_insert(
     session_initializer = sessionmaker(bind=engine)
     with session_initializer() as session:
         session.execute(text(sql))
-        last_id = None
-        if return_id == ReturnLastID.TRUE:
-            last_id = (session.execute(text("SELECT SCOPE_IDENTITY()"))).fetchone()
         session.commit()
-        return last_id
 
 
 def execute_pandas_insert(
@@ -203,8 +193,7 @@ def execute_pandas_insert(
     data_frame: pd.DataFrame,
     schema: str = "dbo",
     database: str | None = None,
-    return_id: ReturnLastID = ReturnLastID.FALSE,
-) -> None | tuple:
+) -> None:
     """Create an engine and execute a SQL insert operation using SQLAlchemy.
 
     Arguments:
@@ -212,20 +201,17 @@ def execute_pandas_insert(
         data_frame (pd.DataFrame): DataFrame to insert into the database.
         schema (str, optional): Schema to insert into. Defaults to "dbo".
         database (str, optional): Database to connect to. Defaults to None. Can be set as an environment variable.
-        chunksize (int, optional): Number of rows to insert at a time. Defaults to 10000.
-        return_id (ReturnLastID, optional): Whether or not to return the last inserted ID. Defaults to ReturnLastID.FALSE.
 
     Raises:
         ValueError: If table is None.
         ValueError: If data_frame is not of type pd.DataFrame.
         ValueError: If the DataFrame has more rows than the maximum insert limit.
         ValueError: If the DataFrame is empty.
-        ValueError: If return_id is not of type ReturnLastID.
         ValueError: If schema is invalid.
 
 
     Returns:
-        None | tuple: If return_id is ReturnLastID.TRUE, returns the last inserted ID.
+        None
 
     Examples:
         To use this function, call `execute_pandas_insert()`:
@@ -249,9 +235,6 @@ def execute_pandas_insert(
     if not isinstance(data_frame, pd.DataFrame):
         raise ValueError("Dataframe is not of type pd.DataFrame")
 
-    if not isinstance(return_id, ReturnLastID):
-        raise ValueError("Return ID parameter given is not of type ReturnLastID")
-
     if data_frame.empty:
         raise ValueError("Dataframe is empty")
 
@@ -259,11 +242,3 @@ def execute_pandas_insert(
     validate_engine(engine)
 
     data_frame.to_sql(table, engine, schema=schema, if_exists="append", index=False)
-
-    if return_id == ReturnLastID.TRUE:
-        last_id = None
-        session_initializer = sessionmaker(bind=engine)
-        with session_initializer() as session:
-            last_id = (session.execute(text("SELECT SCOPE_IDENTITY()"))).fetchone()
-            session.commit()
-        return last_id

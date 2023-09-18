@@ -21,18 +21,6 @@ class InsertType(Enum):
     SINGLE_INSERT = 2
 
 
-class ReturnLastID(Enum):
-    """Enum to define if the index should be returned.
-
-    Attributes:
-        TRUE (int): Return the index.
-        FALSE (int): Do not return the index.
-    """
-
-    TRUE = 1
-    FALSE = 2
-
-
 def create_engine(database: str = None, insert_type: InsertType = None) -> Engine:
     """Create a connection object to a database.
 

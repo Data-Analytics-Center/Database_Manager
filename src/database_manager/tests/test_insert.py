@@ -13,9 +13,8 @@ from src.database_manager.query_execution import (
 
 from .test_utils import delete_env_variables
 
-MAX_INSERT_LIMIT = 80000
-TABLE_NAME = "test"
-DATABASE = "Sandbox"
+TABLE_NAME = "db_manager_tests"
+DATABASE = "test"
 SCHEMA = "dbo"
 
 
@@ -99,7 +98,7 @@ def test_sql_not_provided_for_raw_insert():
 
 def test_valid_raw_insert_for_single_insert_with_custom_sql():
     """Tests the execute_raw_insert() function for single insert with custom SQL."""
-    sql = "INSERT INTO test (id, val) VALUES (1, 'Adam')"
+    sql = "INSERT INTO test (id, val) VALUES (2, 'Adam')"
     execute_raw_insert(sql, insert_type=InsertType.SINGLE_INSERT)
 
 
