@@ -135,7 +135,7 @@ def test_build_insert_query_invalid_table():
 def test_build_insert_query_no_table():
     """Test that the function raises TypeError when table name is not provided."""
     with pytest.raises(TypeError):
-        build_insert_query(["Id", "Values"], [(1, "Value1"), (2, "Value2")])
+        build_insert_query(["Id", "Value"], [(1, "Value1"), (2, "Value2")])
 
 
 def test_build_insert_query_no_columns():

@@ -22,7 +22,7 @@ def test_valid_raw_insert_for_single_insert():
     """Tests the execute_raw_insert() function for single insert."""
     delete_env_variables()
     sql = build_insert_query(
-        TABLE_NAME, ["id", "val"], [(1, "Adam")], database=DATABASE, schema=SCHEMA
+        TABLE_NAME, ["id", "value"], [(1, "Adam")], database=DATABASE, schema=SCHEMA
     )
 
     assert sql is not None
@@ -37,7 +37,7 @@ def test_valid_raw_insert_for_bulk_insert():
     delete_env_variables()
     sql = build_insert_query(
         TABLE_NAME,
-        ["id", "val"],
+        ["id", "value"],
         [(1, "Adam"), (2, "Bob")],
         database=DATABASE,
         schema=SCHEMA,
@@ -55,7 +55,7 @@ def test_valid_raw_insert_with_param_db():
     delete_env_variables()
     database = "test"
     sql = build_insert_query(
-        TABLE_NAME, ["id", "val"], [(1, "Adam"), (2, "Bob")], database=database
+        TABLE_NAME, ["id", "value"], [(1, "Adam"), (2, "Bob")], database=database
     )
 
     assert sql is not None
@@ -68,7 +68,7 @@ def test_valid_raw_insert_with_param_db():
 def test_invalid_insert_type_for_raw_insert():
     """Tests the execute_raw_insert() function for invalid insert type."""
     delete_env_variables()
-    sql = build_insert_query(TABLE_NAME, ["id", "val"], [(1, "Adam")])
+    sql = build_insert_query(TABLE_NAME, ["id", "value"], [(1, "Adam")])
 
     assert sql is not None
     assert sql != ""
@@ -98,14 +98,14 @@ def test_sql_not_provided_for_raw_insert():
 
 def test_valid_raw_insert_for_single_insert_with_custom_sql():
     """Tests the execute_raw_insert() function for single insert with custom SQL."""
-    sql = "INSERT INTO test (id, val) VALUES (2, 'Adam')"
+    sql = f"INSERT INTO {TABLE_NAME} (id, value) VALUES (2, 'Adam')"
     execute_raw_insert(sql, insert_type=InsertType.SINGLE_INSERT)
 
 
 def test_valid_pandas_insert_with_env_var_database():
     """Tests the execute_pandas_insert() function with database environment variable."""
     delete_env_variables()
-    data_frame = pd.DataFrame({"id": [1, 2, 3], "val": ["Adam", "Bob", "Charlie"]})
+    data_frame = pd.DataFrame({"id": [1, 2, 3], "value": ["Adam", "Bob", "Charlie"]})
 
     assert data_frame is not None
     assert not data_frame.empty
@@ -117,7 +117,7 @@ def test_valid_pandas_insert_with_param_db():
     """Tests the execute_pandas_insert() function with database parameter."""
     delete_env_variables()
     os.environ["DATABASE"] = ""
-    data_frame = pd.DataFrame({"id": [1, 2, 3], "val": ["Adam", "Bob", "Charlie"]})
+    data_frame = pd.DataFrame({"id": [1, 2, 3], "value": ["Adam", "Bob", "Charlie"]})
 
     assert data_frame is not None
     assert not data_frame.empty
@@ -144,7 +144,7 @@ def test_pandas_insert_for_invalid_dataframe():
 def test_pandas_insert_for_invalid_table_name():
     """Tests the execute_pandas_insert() function for invalid table name."""
     table_names = ["", " ", None]
-    data_frame = pd.DataFrame({"id": [1, 2, 3], "val": ["Adam", "Bob", "Charlie"]})
+    data_frame = pd.DataFrame({"id": [1, 2, 3], "value": ["Adam", "Bob", "Charlie"]})
 
     assert data_frame is not None
     assert not data_frame.empty
@@ -157,7 +157,7 @@ def test_pandas_insert_for_invalid_table_name():
 def test_pandas_insert_for_invalid_schema():
     """Tests the execute_pandas_insert() function for invalid schema."""
     schema = None
-    data_frame = pd.DataFrame({"id": [1, 2, 3], "val": ["Adam", "Bob", "Charlie"]})
+    data_frame = pd.DataFrame({"id": [1, 2, 3], "value": ["Adam", "Bob", "Charlie"]})
 
     assert data_frame is not None
     assert not data_frame.empty
