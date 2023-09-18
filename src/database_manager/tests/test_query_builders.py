@@ -8,8 +8,7 @@ from dotenv import load_dotenv
 from src.database_manager.query_builders import build_insert_query, build_select_query
 from src.database_manager.tests.test_utils import delete_env_variables
 
-TABLE_NAME = "test"
-MAX_INSERT_LIMIT = 80000
+TABLE_NAME = "db_manager_tests"
 
 
 def test_build_select_query_invalid_table():
@@ -43,7 +42,7 @@ def test_build_select_query_with_all_args_provided():
     """Test that the function returns the correct query with all args provided."""
     sql_query = build_select_query(
         table=TABLE_NAME,
-        database="Sandbox",
+        database="test",
         schema="dbo",
         top=100,
         columns=["Id", "Value"],
@@ -51,7 +50,7 @@ def test_build_select_query_with_all_args_provided():
         group_by="Id",
         order_by="Value DESC",
     )
-    expected_query = f"SELECT TOP 100 Id, Value FROM [Sandbox].[dbo].[{TABLE_NAME}] WHERE Id = 5 GROUP BY Id ORDER BY Value DESC"  # noqa: E501
+    expected_query = f"SELECT TOP 100 Id, Value FROM [test].[dbo].[{TABLE_NAME}] WHERE Id = 5 GROUP BY Id ORDER BY Value DESC"  # noqa: E501
     assert sql_query == expected_query
 
 
@@ -104,11 +103,11 @@ def test_build_select_query_with_param_db_and_schema():
     """Test if the function returns the correct query when the database and schema parameter is provided as argument."""
     sql_query = build_select_query(
         table=TABLE_NAME,
-        database="Sandbox",
+        database="test",
         schema="dbo",
         columns=["Id", "Value"],
     )
-    expected_query = f"SELECT Id, Value FROM [Sandbox].[dbo].[{TABLE_NAME}]"
+    expected_query = f"SELECT Id, Value FROM [test].[dbo].[{TABLE_NAME}]"
     assert sql_query == expected_query
 
 
@@ -119,7 +118,7 @@ def test_build_select_query_with_env_db_and_schema():
         table=TABLE_NAME,
         columns=["Id", "Value"],
     )
-    expected_query = f"SELECT Id, Value FROM [Sandbox].[dbo].[{TABLE_NAME}]"
+    expected_query = f"SELECT Id, Value FROM [test].[dbo].[{TABLE_NAME}]"
     assert sql_query == expected_query
 
 
@@ -160,10 +159,10 @@ def test_build_insert_query_with_param_db_and_schema():
         table=TABLE_NAME,
         columns=["Id", "Value"],
         data_rows=[(1, "Value1"), (2, "Value2")],
-        database="Sandbox",
+        database="test",
         schema="dbo",
     )
-    expected_query = f"INSERT INTO [Sandbox].[dbo].[{TABLE_NAME}] (Id, Value) VALUES (1, 'Value1'), (2, 'Value2');"  # noqa: E501
+    expected_query = f"INSERT INTO [test].[dbo].[{TABLE_NAME}] (Id, Value) VALUES (1, 'Value1'), (2, 'Value2');"  # noqa: E501
     assert sql_query == expected_query
 
 

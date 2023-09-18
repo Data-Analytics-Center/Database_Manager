@@ -20,7 +20,7 @@ def test_valid_engine_with_param_database():
     """Test a valid engine is created with passing database as param."""
     delete_env_variables()
     os.environ["DATABASE"] = ""
-    engine = create_engine(database="Sandbox")
+    engine = create_engine(database="test")
     assert engine is not None
     assert isinstance(engine, Engine)
 

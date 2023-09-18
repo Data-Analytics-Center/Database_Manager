@@ -90,11 +90,11 @@ def test_execute_pandas_select_database_param():
     """Test that an invalid SQL query is rejected for a pandas select."""
     delete_env_variables()
     os.environ["DATABASE"] = ""
-    execute_pandas_select("SELECT * FROM test_select", database="Sandbox")
+    execute_pandas_select("SELECT * FROM test_select", database="test")
 
 
 def test_execute_raw_select_database_param():
     """Test that an invalid SQL query is rejected for a pandas select."""
     delete_env_variables()
     os.environ["DATABASE"] = ""
-    execute_raw_select("SELECT * FROM test_select", database="Sandbox")
+    execute_raw_select("SELECT * FROM test_select", database="test")
