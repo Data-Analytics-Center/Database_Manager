@@ -1,12 +1,12 @@
 """Contains database connection logic."""
 
-from enum import Enum
 import os
 import urllib.parse
+from enum import Enum
 
 from dotenv import load_dotenv
-from sqlalchemy import create_engine as sqlalchemy_create_engine
 from sqlalchemy import Engine
+from sqlalchemy import create_engine as sqlalchemy_create_engine
 
 
 class InsertType(Enum):
@@ -16,19 +16,21 @@ class InsertType(Enum):
         BULK_INSERT (int): Engine is for bulk inserts only.
         SINGLE_INSERT (int): Engine is for single inserts only.
     """
-    
+
     BULK_INSERT = 1
     SINGLE_INSERT = 2
 
 
-def create_engine(insert_type: InsertType = None) -> Engine: 
+def create_engine(database: str = None, insert_type: InsertType = None) -> Engine:
     """Create a connection object to a database.
 
     This function creates a SQLAlchemy Engine connection object to a database.
     It relies on environment variables for the connection parameters,
-    including the driver, server, database, and environment type.
+    including the driver, server, database, and environment type. Database can be
+    passed as a parameter to this function, or it can be set as an environment variable.
 
     Arguments:
+        database (str): The name of the database to connect to.
         insert_type: True if Engine is for bulk inserts only
 
     Environment Variables:
@@ -51,11 +53,14 @@ def create_engine(insert_type: InsertType = None) -> Engine:
     load_dotenv()
 
     server = os.getenv("SERVER")
-    database = os.getenv("DATABASE")
+    if database is None or database == "" or database.isspace():
+        database = os.getenv("DATABASE")
     driver = os.getenv("DRIVER")
 
     if database is None or database == "" or database.isspace():
-        raise ValueError("Database environment variable is not properly set.")
+        raise ValueError(
+            "Database is not set please specify a database as an execute function parameter or environment variable."
+        )
     if driver is None or driver == "" or driver.isspace():
         raise ValueError("Driver environment variable is not properly set.")
     if server is None or server == "" or server.isspace():
@@ -66,9 +71,7 @@ def create_engine(insert_type: InsertType = None) -> Engine:
     if env_type == "PROD":
         uid = os.getenv("UID")
         pid = os.getenv("PID")
-        connection_string = (
-	f"mssql+pyodbc://{uid}:{urllib.parse.quote_plus(pid)}@{server}/{database}?driver={urllib.parse.quote_plus(driver)}&Encrypt=no"
-    )
+        connection_string = f"mssql+pyodbc://{uid}:{urllib.parse.quote_plus(pid)}@{server}/{database}?driver={urllib.parse.quote_plus(driver)}&Encrypt=no"
     else:
         connection_string = (
             f"mssql+pyodbc://@{server}/{database}?driver={driver}&Encrypt=no"

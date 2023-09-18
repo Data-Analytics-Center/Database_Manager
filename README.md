@@ -47,3 +47,9 @@ To verify the package builds correctly prior to shipping a new version we can ru
 If `Hello World` prints to the terminal then the package built and installed successfully.
 
 Make sure to uninstall the package after by doing `pipenv uninstall database-manager`
+
+## Testing
+
+Run tests using VSCode built-in testing or run PyTest in your terminal.
+
+# TODO: talk about the testing database/tables

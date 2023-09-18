@@ -1,9 +1,9 @@
 [tool.ruff]
 
 extend-select = ["C4", "SIM", "TCH", "N", "D", "UP", "FBT", "T10", "PT", "ARG", "PD"]
-ignore = ["D407", "D406"]
+ignore = ["D407", "D406", "D413"]
 
-line-length = 120
+line-length = 125
 
 show-fixes = true
 
