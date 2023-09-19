@@ -96,7 +96,7 @@ def test_sql_not_provided_for_raw_insert():
 
 def test_valid_raw_insert_for_single_insert_with_custom_sql():
     """Tests the execute_raw_insert() function for single insert with custom SQL."""
-    sql = f"INSERT INTO {TABLE_NAME} (id, value) VALUES (2, 'Adam')"
+    sql = f"INSERT INTO {DATABASE}.{SCHEMA}.{TABLE_NAME} (id, value) VALUES (2, 'Adam')"
     execute_raw_insert(sql, insert_type=InsertType.SINGLE_INSERT)
 
 
