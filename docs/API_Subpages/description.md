@@ -117,3 +117,14 @@ df = pd.DataFrame({"id": [1, 2, 3], "name": ["Brandon", "Jeremy", "Grace"]})
 
 query_execution.execute_pandas_insert(table, df)
 ```
+
+- If you just want to use the engine for performing multiple queries within the same connection, just use the create_engine() function to get a SQLAlchemy Engine object.
+```python
+from database_manager.connection_manager import InsertType, create_engine
+
+# For single inserts
+engine = connection_manager.create_engine()
+
+# For bulk inserts
+engine = connection_manager.create_engine(insert_type=InsertType.BULK_INSERT)
+```
