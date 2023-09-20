@@ -6,6 +6,7 @@ nav:
     - Description: API_Subpages/description.md
     - Query Builders: API_Subpages/query_builders.md
     - Query Execution: API_Subpages/query_execution.md
+    - Connection Manager: API_Subpages/engine.md
   - Project Development: project_development.md
   - Maintainer Reference:
     - connection_manager.py: Maintainer_Subpages/connections.md
