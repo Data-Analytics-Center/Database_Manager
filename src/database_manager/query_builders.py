@@ -1,5 +1,6 @@
 """Query Builders module contains functions to build SQL queries."""
 import os
+from datetime import datetime
 
 from dotenv import load_dotenv
 
@@ -130,7 +131,9 @@ def build_insert_query(
             )
         new_row = []
         for i in range(len(row)):
-            if isinstance(row[i], str):
+            if isinstance(row[i], datetime):
+                new_row.append(f"{row[i].strftime('%Y-%m-%d %H:%M:%S')}")
+            elif isinstance(row[i], str):
                 new_row.append(f"{row[i]}")
             else:
                 new_row.append(row[i])
