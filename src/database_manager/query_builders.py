@@ -107,6 +107,8 @@ def build_insert_query(
         )
         ```
     """
+    load_dotenv()
+
     if not table or table.isspace():
         raise ValueError("Table name is required.")
 
