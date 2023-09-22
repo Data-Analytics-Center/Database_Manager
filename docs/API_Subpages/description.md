@@ -47,8 +47,12 @@ The package currently contains 2 main modules:
 - Getting all the rows from a given table 
 ```python
 from database_manager import query_builders, query_execution
+from database_manager import query_builders, query_execution
 
 # Specify the name of the table to get the data from.
+table = "test_table"
+sql = query_builders.build_select_query(table, columns=["id", "name"])
+result = query_execution.execute_raw_select(sql)
 table = "test_table"
 sql = query_builders.build_select_query(table, columns=["id", "name"])
 result = query_execution.execute_raw_select(sql)
@@ -67,9 +71,13 @@ Example Output
 - Getting all the rows from a given table as a pandas dataframe
 ```python
 from database_manager import query_builders, query_execution
+from database_manager import query_builders, query_execution
 
 table = "test_table"
+table = "test_table"
 cols = ["id", "name"]
+sql = query_builders.build_select_query(table, columns=cols)
+results = query_execution.execute_pandas_select(sql)
 sql = query_builders.build_select_query(table, columns=cols)
 results = query_execution.execute_pandas_select(sql)
 
@@ -88,10 +96,15 @@ Example Output
 ```python
 from database_manager import query_builders, query_execution
 from database_manager.connection_manager import InsertType
+from database_manager import query_builders, query_execution
+from database_manager.connection_manager import InsertType
 
+table = "test_table"
 table = "test_table"
 cols = ["id", "name"]
 values = [(1, "Kevin")]
+sql = query_builders.build_insert_query(table, columns=cols, data_rows=values)
+query_execution.execute_raw_insert(sql, InsertType.SINGLE_INSERT)
 sql = query_builders.build_insert_query(table, columns=cols, data_rows=values)
 query_execution.execute_raw_insert(sql, InsertType.SINGLE_INSERT)
 ```
@@ -99,10 +112,14 @@ query_execution.execute_raw_insert(sql, InsertType.SINGLE_INSERT)
 - Performing bulk insert into a table
 ```python
 from database_manager import query_builders, query_execution
+from database_manager import query_builders, query_execution
 
+table = "test_table"
 table = "test_table"
 cols = ["id", "name"]
 values = [(1, "Kevin"), (2, "John"), (3, "Jane"), (4, "Matt")]
+sql = query_builders.build_insert_query(table, columns=cols, data_rows=values)
+query_execution.execute_raw_insert(sql, InsertType.BULK_INSERT)
 sql = query_builders.build_insert_query(table, columns=cols, data_rows=values)
 query_execution.execute_raw_insert(sql, InsertType.BULK_INSERT)
 ```
@@ -110,8 +127,10 @@ query_execution.execute_raw_insert(sql, InsertType.BULK_INSERT)
 - Inserting a pandas data frame into a table
 ```python
 from database_manager import query_builders, query_execution
+from database_manager import query_builders, query_execution
 import pandas as pd
 
+table = "test_table"
 table = "test_table"
 df = pd.DataFrame({"id": [1, 2, 3], "name": ["Brandon", "Jeremy", "Grace"]})
 
