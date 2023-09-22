@@ -103,6 +103,7 @@ def build_insert_query(
             table="dbo.MyTable",
             cols=["Col1", "Col2"],
             values=[(1, "Value1"), (2, "Value2")],
+            schema="dbo",
         )
         ```
     """

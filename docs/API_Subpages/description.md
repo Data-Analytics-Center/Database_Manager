@@ -127,4 +127,12 @@ engine = connection_manager.create_engine()
 
 # For bulk inserts
 engine = connection_manager.create_engine(insert_type=InsertType.BULK_INSERT)
+
+# To execute a query using the Engine object
+sql = "SELECT * FROM dbo.my_table"
+with engine.connect() as conn:
+    result = conn.execute(sql)
+
+    for row in result:
+        print(row)
 ```
