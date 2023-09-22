@@ -33,9 +33,11 @@ def create_engine(database: str = None, insert_type: InsertType = None) -> Engin
         database (str): The name of the database to connect to.
         insert_type: True if Engine is for bulk inserts only
 
-    Environment Variables:
+    !!! tip "Environment Variables"
         driver (str): The driver that connects to the database.
+
         server (str): The name of the database server.
+
         database (str): The database to connect to.
 
     Returns:
