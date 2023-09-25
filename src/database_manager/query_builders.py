@@ -73,7 +73,7 @@ def build_select_query(
 def build_insert_query(
     table: str,
     columns: list,
-    data_rows: list[tuple],
+    values: list[dict],
     database: str = None,
     schema: str = "dbo",
 ) -> str:
@@ -82,13 +82,14 @@ def build_insert_query(
     Arguments:
         table (str): Table to insert into.
         columns (list): List of columns to insert into.
-        data_rows (list[tuple]): List of values to insert where each tuple represents a row.
+        values (list[dict]): List of values to insert where each dictionary represents a row.
         database (str, optional): Database to connect to. Defaults to None. Can be set as an environment variable.
         schema (str, optional): Schema to connect to. Defaults to "dbo".
 
     Raises:
         ValueError: If table name is not provided.
         ValueError: If columns list is not provided.
+        ValueError: If values list is not provided.
         ValueError: If number of values exceeds the maximum insert limit.
         ValueError: If number of columns does not match the number of args provided.
         ValueError: If database name is not provided and is not set as an environment variable.
@@ -112,6 +113,11 @@ def build_insert_query(
     if not columns:
         raise ValueError("At least one column is required!")
 
+    if not values:
+        raise ValueError(
+            "At least one row of values is required to build an insert query!"
+        )
+
     if database is None or database == "" or database.isspace():
         if not os.getenv("DATABASE"):
             raise ValueError(
@@ -119,18 +125,11 @@ def build_insert_query(
             )
         database = os.getenv("DATABASE")
 
-    modified_data_rows = []
-    for row in data_rows:
-        if len(columns) != len(row):
-            raise ValueError(
-                "Number of columns does not match the number of args provided!"
-            )
+    value_placeholders = []
+    for row in values:
         new_row = []
-        for i in range(len(row)):
-            if isinstance(row[i], str):
-                new_row.append(f"{row[i]}")
-            else:
-                new_row.append(row[i])
+        for key, _ in enumerate(row):
+            
         modified_data_rows.append(str(new_row).replace("[", "(").replace("]", ")"))
 
     sql_query = f"""INSERT INTO [{database}].[{schema}].[{table}] ({", ".join(columns)}) VALUES {', '.join(modified_data_rows)};"""  # noqa: E501

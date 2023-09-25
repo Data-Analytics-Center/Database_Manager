@@ -142,6 +142,7 @@ def execute_pandas_select(
 
 def execute_raw_insert(
     sql: str,
+    values: dict,
     database: str | None = None,
     insert_type: InsertType = InsertType.BULK_INSERT,
 ) -> None:
@@ -149,6 +150,7 @@ def execute_raw_insert(
 
     Arguments:
         sql (str): SQL query to execute.
+        values: (dict): Values to insert into the database.
         database (str, optional): Database to connect to. Defaults to None. Can be set as an environment variable.
         insert_type (InsertType, optional): Type of insert operation to execute. Defaults to InsertType.BULK_INSERT.
 
@@ -184,7 +186,7 @@ def execute_raw_insert(
 
     session_initializer = sessionmaker(bind=engine)
     with session_initializer() as session:
-        session.execute(text(sql))
+        session.execute(sql, **values)
         session.commit()
 
 
