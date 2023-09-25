@@ -1,5 +1,6 @@
 """Query Builders module contains functions to build SQL queries."""
 import os
+from datetime import datetime
 
 from dotenv import load_dotenv
 
@@ -103,9 +104,12 @@ def build_insert_query(
             table="dbo.MyTable",
             cols=["Col1", "Col2"],
             values=[(1, "Value1"), (2, "Value2")],
+            schema="dbo",
         )
         ```
     """
+    load_dotenv()
+
     if not table or table.isspace():
         raise ValueError("Table name is required.")
 
@@ -127,7 +131,9 @@ def build_insert_query(
             )
         new_row = []
         for i in range(len(row)):
-            if isinstance(row[i], str):
+            if isinstance(row[i], datetime):
+                new_row.append(f"{row[i].strftime('%Y-%m-%d %H:%M:%S')}")
+            elif isinstance(row[i], str):
                 new_row.append(f"{row[i]}")
             else:
                 new_row.append(row[i])

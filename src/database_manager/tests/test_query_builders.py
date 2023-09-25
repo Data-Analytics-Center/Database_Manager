@@ -180,7 +180,6 @@ def test_build_insert_query_with_param_db_and_schema():
 
 def test_build_insert_query_with_env_db_and_schema():
     """Test if the function returns the correct query when the database and schema parameter is not provided."""
-    load_dotenv()
     database = os.getenv("DATABASE")
     sql_query = build_insert_query(
         table=TABLE_NAME,

@@ -33,9 +33,11 @@ def create_engine(database: str = None, insert_type: InsertType = None) -> Engin
         database (str): The name of the database to connect to.
         insert_type: True if Engine is for bulk inserts only
 
-    Environment Variables:
+    !!! tip "Environment Variables"
         driver (str): The driver that connects to the database.
+
         server (str): The name of the database server.
+
         database (str): The database to connect to.
 
     Returns:
@@ -45,9 +47,17 @@ def create_engine(database: str = None, insert_type: InsertType = None) -> Engin
         ValueError: If any of the environment variables are not set properly.
 
     Example:
-        To use this function, set the environment variables and then call `create_connection()`:
+        To just get a SQLAlchemy Engine object, call `create_engine()`:
         ```python
         engine = create_engine()
+        ```
+        If you want to execute a query, you can use the engine object to connect to the database:
+        ```python
+        with engine.connect() as conn:
+            result = conn.execute("SELECT * FROM dbo.MyTable")
+
+            for row in result:
+                print(row)
         ```
     """
     load_dotenv()
