@@ -38,7 +38,8 @@ def build_select_query(
         To use this function, call `build_select_query()`:
         ```python
         sql_query = build_select_query(
-            table="dbo.MyTable",
+            table="MyTable",
+            schema="userSchema",
             top=100,
             cols=["Col1", "Col2"],
             where="Col1 = 1",

@@ -3,6 +3,7 @@
 import pandas as pd
 from sqlalchemy import Engine, text
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql.dml import Insert
 
 from .connection_manager import InsertType, create_engine
 
@@ -177,14 +178,15 @@ def execute_raw_insert(
     if not isinstance(insert_type, InsertType):
         raise ValueError("Insert type parameter given is not of type InsertType")
 
-    validate_sql(sql)
+    if not isinstance(sql, Insert):
+        validate_sql(sql)
 
     engine = create_engine(database, insert_type)
     validate_engine(engine)
 
     session_initializer = sessionmaker(bind=engine)
     with session_initializer() as session:
-        session.execute(text(sql))
+        session.execute(sql)
         session.commit()
 
 
