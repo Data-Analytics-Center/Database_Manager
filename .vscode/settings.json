@@ -15,7 +15,7 @@
     "--profile",
     "black"
   ],
-  "python.defaultInterpreterPath": ".venv\\Scripts\\python.exe",
+  "python.defaultInterpreterPath": "menv\\Scripts\\python.exe",
   "autoDocstring.quoteStyle": "\"\"\"",
   "autoDocstring.docstringFormat": "pep257",
   "editor.formatOnSave": true,
