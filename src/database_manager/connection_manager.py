@@ -37,7 +37,7 @@ def engine_factory(database: str = None, *, is_bulk_insert: bool = False) -> Eng
         ValueError: If any of the environment variables are not set properly.
 
     Example:
-        To just get a SQLAlchemy Engine object, call `create_engine()`:
+        To just get a SQLAlchemy Engine object, call `engine_factory()`:
         ```python
         from Database_Manager import engine_factory
 

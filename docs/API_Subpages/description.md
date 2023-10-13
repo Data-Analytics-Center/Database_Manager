@@ -2,6 +2,12 @@
 
 ## Overview
 
+The Database Manager currently is an abstraction upon simply creating an SQLAlchemy Engine which is a trivial operation
+
+but there are so many ways to connect to a database it is best we all standardize on one way to do it.
+
+Also, there are pros and cons to different ways but this way is extremely versatile in that it can handle any type of connection
+
 ### Goals
 
 Database-Manager is an abstraction on top of python database packages meant to accomplish the following goals:
@@ -10,45 +16,8 @@ Database-Manager is an abstraction on top of python database packages meant to a
 - serve as an adapter between our applications & third party database libraries to facilitate any future underlying library changes (motivated by us switching from pyodbc to sqlalchemy)
 - create a unified database library to use across all DAC applications
 
-!!! tip "Enviroment Variables"
+### Features
 
-    **Always Required**
-
-    ***ENV_TYPE:*** used to determine the environment, can be either `DEV` or `PROD` 
-
-    ***SERVER:*** the server to connect to
-
-    ***DRIVER:*** the driver used to connect to the database
-
-    --------------------------------------------
-
-    **Optional**
-
-    ***DATABASE:*** the database to connect to (can be set as environment variable or passed in as a parameter)
-
-    --------------------------------------------
-
-    **Production Only**
-
-    ***UID:*** the username of the user to connect as
-
-    ***PID:*** the password of the user to connect as
-
-
-## Quick Examples
-
-```python
-from Database_Manager import engine_factory
-
-engine = engine_factory()
-```
-
-The above example will create an engine by pulling the database from the environment.
-If you want to specify the database you can do so by passing it in as a parameter.
-
-```python
-from Database_Manager import engine_factory
-
-database_name = "my_database"
-engine = engine_factory(database=database_name)
-```
+- easy engine creation
+- guide on best practices for interacting with databases
+- support for different types of querying like raw SQL, pandas queries, & sqlalchemy core queries
