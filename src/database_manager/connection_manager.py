@@ -1,44 +1,34 @@
 """Contains database connection logic."""
 
+
 import os
 import urllib.parse
-from enum import Enum
 
 from dotenv import load_dotenv
-from sqlalchemy import Engine
-from sqlalchemy import create_engine as sqlalchemy_create_engine
+from sqlalchemy import Engine, create_engine
 
 
-class InsertType(Enum):
-    """Enum to define the type of engine to create.
-
-    Attributes:
-        BULK_INSERT (int): Engine is for bulk inserts only.
-        SINGLE_INSERT (int): Engine is for single inserts only.
-    """
-
-    BULK_INSERT = 1
-    SINGLE_INSERT = 2
-
-
-def create_engine(database: str = None, insert_type: InsertType = None) -> Engine:
-    """Create a connection object to a database.
+def engine_factory(database: str = None, *, is_bulk_insert: bool = False) -> Engine:
+    """Create an engine object for connecting to a database.
 
     This function creates a SQLAlchemy Engine connection object to a database.
     It relies on environment variables for the connection parameters,
     including the driver, server, database, and environment type. Database can be
     passed as a parameter to this function, or it can be set as an environment variable.
+    Environment variables are loaded from a .env file in the root directory of the project.
 
-    Arguments:
+
+    Args:
         database (str): The name of the database to connect to.
-        insert_type: True if Engine is for bulk inserts only
+        is_bulk_insert (bool): Whether or not to use fast_executemany for bulk inserts.
+
 
     !!! tip "Environment Variables"
         driver (str): The driver that connects to the database.
 
         server (str): The name of the database server.
 
-        database (str): The database to connect to.
+        database (str, optional): The database to connect to. Can be passed in as a parameter.
 
     Returns:
         engine (Engine): A SQLAlchemy Engine object.
@@ -49,46 +39,62 @@ def create_engine(database: str = None, insert_type: InsertType = None) -> Engin
     Example:
         To just get a SQLAlchemy Engine object, call `create_engine()`:
         ```python
-        engine = create_engine()
-        ```
-        If you want to execute a query, you can use the engine object to connect to the database:
-        ```python
-        with engine.connect() as conn:
-            result = conn.execute("SELECT * FROM dbo.MyTable")
+        from Database_Manager import engine_factory
 
-            for row in result:
-                print(row)
+        engine = engine_factory()
+
+        with engine.begin() as connection:
+            result = connection.execute("SELECT 1")
+            print(result.fetchone())
+
+        with engine.begin() as connection:
+            dataframe = pd.read_sql("SELECT 1", connection)
         ```
     """
     load_dotenv()
 
     server = os.getenv("SERVER")
-    if database is None or database == "" or database.isspace():
-        database = os.getenv("DATABASE")
+
     driver = os.getenv("DRIVER")
 
     if database is None or database == "" or database.isspace():
+        database = os.getenv("DATABASE")
+
+    if database is None or database == "" or database.isspace():
         raise ValueError(
-            "Database is not set please specify a database as an execute function parameter or environment variable."
+            "DATABASE is not set please specify a database as an execute function parameter or environment variable."
         )
+
     if driver is None or driver == "" or driver.isspace():
-        raise ValueError("Driver environment variable is not properly set.")
+        raise ValueError("DRIVER environment variable is not properly set.")
+
     if server is None or server == "" or server.isspace():
-        raise ValueError("Server environment variable is not properly set.")
+        raise ValueError("SERVER environment variable is not properly set.")
 
     env_type = os.getenv("ENV_TYPE")
+
+    if env_type is None or env_type == "" or env_type.isspace():
+        raise ValueError("ENV_TYPE environment variable is not properly set.")
 
     if env_type == "PROD":
         uid = os.getenv("UID")
         pid = os.getenv("PID")
+
+        if uid is None or uid == "" or uid.isspace():
+            raise ValueError("UID environment variable is not properly set.")
+        if pid is None or pid == "" or pid.isspace():
+            raise ValueError("PID environment variable is not properly set.")
+
         connection_string = f"mssql+pyodbc://{uid}:{urllib.parse.quote_plus(pid)}@{server}/{database}?driver={urllib.parse.quote_plus(driver)}&Encrypt=no"
+
     else:
         connection_string = (
             f"mssql+pyodbc://@{server}/{database}?driver={driver}&Encrypt=no"
         )
 
-    if insert_type == InsertType.BULK_INSERT:
-        engine = sqlalchemy_create_engine(connection_string, fast_executemany=True)
-    else:
-        engine = sqlalchemy_create_engine(connection_string)
+    engine = (
+        create_engine(connection_string, fast_executemany=True)
+        if is_bulk_insert
+        else create_engine(connection_string)
+    )
     return engine

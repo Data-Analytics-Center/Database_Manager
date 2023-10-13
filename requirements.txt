@@ -1,0 +1,7 @@
+sqlalchemy
+wheel
+pytest
+python-dotenv
+pyodbc
+pandas
+pytest-cov 

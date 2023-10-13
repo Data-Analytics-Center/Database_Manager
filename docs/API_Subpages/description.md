@@ -6,16 +6,9 @@
 
 Database-Manager is an abstraction on top of python database packages meant to accomplish the following goals:
 
-- create a simple API to do common DB tasks such as selecting data and inserting data
+- normalize the way we interact with databases across all DAC applications and reduce duplicate code
 - serve as an adapter between our applications & third party database libraries to facilitate any future underlying library changes (motivated by us switching from pyodbc to sqlalchemy)
 - create a unified database library to use across all DAC applications
-
-### Structure
-
-The package currently contains 2 main modules:
-
-- Query Builders: functions to build SQL queries for you based on the parameters you pass in
-- Query Executors: functions to execute SQL queries for you
 
 !!! tip "Enviroment Variables"
 
@@ -42,116 +35,20 @@ The package currently contains 2 main modules:
     ***PID:*** the password of the user to connect as
 
 
-## Some Code Examples
+## Quick Examples
 
-- Getting all the rows from a given table 
 ```python
-from database_manager import query_builders, query_execution
-from database_manager import query_builders, query_execution
+from Database_Manager import engine_factory
 
-# Specify the name of the table to get the data from.
-table = "test_table"
-sql = query_builders.build_select_query(table, columns=["id", "name"])
-result = query_execution.execute_raw_select(sql)
-table = "test_table"
-sql = query_builders.build_select_query(table, columns=["id", "name"])
-result = query_execution.execute_raw_select(sql)
-
-# 'result' here will be a list of tuples. Each tuple is a row from the table.
-for row in result:
-    print(row)
-```
-Example Output
-```
-(1, 'Adam')   
-(2, 'Bob')    
-(3, 'Charlie')
+engine = engine_factory()
 ```
 
-- Getting all the rows from a given table as a pandas dataframe
+The above example will create an engine by pulling the database from the environment.
+If you want to specify the database you can do so by passing it in as a parameter.
+
 ```python
-from database_manager import query_builders, query_execution
-from database_manager import query_builders, query_execution
+from Database_Manager import engine_factory
 
-table = "test_table"
-table = "test_table"
-cols = ["id", "name"]
-sql = query_builders.build_select_query(table, columns=cols)
-results = query_execution.execute_pandas_select(sql)
-sql = query_builders.build_select_query(table, columns=cols)
-results = query_execution.execute_pandas_select(sql)
-
-# 'results' here will be a pandas dataframe.
-print(results)
-```
-Example Output
-```
-     id   val
-0     1  Adam
-1     2  Travis
-2     3  Kevin
-```
-
-- Performing a single insert into a table
-```python
-from database_manager import query_builders, query_execution
-from database_manager.connection_manager import InsertType
-from database_manager import query_builders, query_execution
-from database_manager.connection_manager import InsertType
-
-table = "test_table"
-table = "test_table"
-cols = ["id", "name"]
-values = [(1, "Kevin")]
-sql = query_builders.build_insert_query(table, columns=cols, data_rows=values)
-query_execution.execute_raw_insert(sql, InsertType.SINGLE_INSERT)
-sql = query_builders.build_insert_query(table, columns=cols, data_rows=values)
-query_execution.execute_raw_insert(sql, InsertType.SINGLE_INSERT)
-```
-
-- Performing bulk insert into a table
-```python
-from database_manager import query_builders, query_execution
-from database_manager import query_builders, query_execution
-
-table = "test_table"
-table = "test_table"
-cols = ["id", "name"]
-values = [(1, "Kevin"), (2, "John"), (3, "Jane"), (4, "Matt")]
-sql = query_builders.build_insert_query(table, columns=cols, data_rows=values)
-query_execution.execute_raw_insert(sql, InsertType.BULK_INSERT)
-sql = query_builders.build_insert_query(table, columns=cols, data_rows=values)
-query_execution.execute_raw_insert(sql, InsertType.BULK_INSERT)
-```
-
-- Inserting a pandas data frame into a table
-```python
-from database_manager import query_builders, query_execution
-from database_manager import query_builders, query_execution
-import pandas as pd
-
-table = "test_table"
-table = "test_table"
-df = pd.DataFrame({"id": [1, 2, 3], "name": ["Brandon", "Jeremy", "Grace"]})
-
-query_execution.execute_pandas_insert(table, df)
-```
-
-- If you just want to use the engine for performing multiple queries within the same connection, just use the create_engine() function to get a SQLAlchemy Engine object.
-```python
-from database_manager.connection_manager import InsertType, create_engine
-
-# For single inserts
-engine = connection_manager.create_engine()
-
-# For bulk inserts
-engine = connection_manager.create_engine(insert_type=InsertType.BULK_INSERT)
-
-# To execute a query using the Engine object
-sql = "SELECT * FROM dbo.my_table"
-with engine.connect() as conn:
-    result = conn.execute(sql)
-
-    for row in result:
-        print(row)
+database_name = "my_database"
+engine = engine_factory(database=database_name)
 ```

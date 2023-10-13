@@ -4,14 +4,10 @@ nav:
   - Home: index.md
   - API:
     - Description: API_Subpages/description.md
-    - Query Builders: API_Subpages/query_builders.md
-    - Query Execution: API_Subpages/query_execution.md
     - Connection Manager: API_Subpages/engine.md
+    - Examples & Best Practices: API_Subpages/examples.md
+  - SQLAlchemyCore: SQLAlchemyCore.md
   - Project Development: project_development.md
-  - Maintainer Reference:
-    - connection_manager.py: Maintainer_Subpages/connections.md
-    - query_execution.py: Maintainer_Subpages/query_execution.md
-    - query_builders.py: Maintainer_Subpages/query_builders.md
 
 theme:
   name: material

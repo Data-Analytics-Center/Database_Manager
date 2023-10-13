@@ -2,33 +2,24 @@
 
 Welcome to the Database Manager Documentation!
 
-To get learn to use the package please go to the [API Documentation](/API_Subpages/description/) page.
+## Table of Contents
 
-How to install this package?
+- [API Documentation](/API_Subpages/description/)
+- [SQLAlchemy Core](SQLAlchemyCore.md)
+- [Project Development](project_development.md)
 
-Make sure you have a github access token. If not, follow these steps -
+## Installation
 
-1. Generate a Personal Access Token:
-- Go to your GitHub account settings.
-- Click on "Developer settings" > "Personal access tokens" > "Generate token."
-- Give it a name, select the appropriate scopes (e.g., repo for full access to private repositories), and generate the token.
+Activate your virtual environment
 
-2. Save the token somewhere secure and do not share it with anyone. You will not be able to view the token again so make sure you copy and save it.
+`./menv/Scripts/activate`
 
-Use the following link to install the package into your pipenv environment - 
+Install the package
 
-`pipenv install git+https://<ACCESS_TOKEN>@github.com/Data-Analytics-Center/Database_Manager.git#egg=Database_Manager`
+`pip install https://github.com/Data-Analytics-Center/Database_Manager`
 
-Replace ``<ACCESS_TOKEN>`` with your access token.
+To update the package
 
-Use the following link to install the package into your venv environment (assuming you have the environment created and activated)-
+`pip install --upgrade https://github.com/Data-Analytics-Center/Database_Manager`
 
-`pip install git+https://<ACCESS_TOKEN>@github.com/Data-Analytics-Center/Database_Manager.git#egg=Database_Manager`
-
-Replace ``<ACCESS_TOKEN>`` with your access token.
-
-To update the package run the following:
-
-`pipenv update database-manager`
-
-To work on further development of the package please visit the `Project Developmnet` and `Maintainer Reference` pages.
+To work on further development of the package please visit the `Project Developmnet` page.

@@ -22,7 +22,7 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Operating System :: OS Independent",
     ],
-    install_requires=["sqlalchemy", "pandas", "wheel", "python-dotenv", "pyodbc"],
+    install_requires=["sqlalchemy", "wheel", "python-dotenv", "pyodbc"],
     extras_require={
         "dev": ["pytest>=7.0", "twine>=4.0.2"],
     },

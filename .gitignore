@@ -1,5 +1,4 @@
-.venv/*
-!.venv/.gitkeep
+menv/*
 *.env
 buildscripts/
 *.css.map
