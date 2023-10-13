@@ -5,7 +5,7 @@ nav:
   - Home: index.md
   - API:
     - Description: API_Subpages/description.md
-    - Connection Manager: API_Subpages/engine.md
+    - Engine Factory: API_Subpages/engine.md
     - Examples & Best Practices: API_Subpages/examples.md
   - SQLAlchemyCore: SQLAlchemyCore.md
   - Project Development: project_development.md
@@ -36,6 +36,8 @@ theme:
         name: Switch to light mode    
       primary: teal
       accent: lime
+  icon:
+    annotation: material/arrow-right-circle
 
 plugins:
   - search
@@ -54,3 +56,4 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.mark
   - attr_list
+  - md_in_html

@@ -23,12 +23,28 @@ def engine_factory(database: str = None, *, is_bulk_insert: bool = False) -> Eng
         is_bulk_insert (bool): Whether or not to use fast_executemany for bulk inserts.
 
 
-    !!! tip "Environment Variables"
-        driver (str): The driver that connects to the database.
+    !!! info "Enviroment Variables"
+        **Always Required**
 
-        server (str): The name of the database server.
+        ***ENV_TYPE:*** used to determine the environment, can be either `DEV` or `PROD`
 
-        database (str, optional): The database to connect to. Can be passed in as a parameter.
+        ***SERVER:*** the server to connect to
+
+        ***DRIVER:*** the driver used to connect to the database
+
+        --------------------------------------------
+
+        **Optional**
+
+        ***DATABASE:*** the database to connect to (can be set as environment variable or passed in as a parameter)
+
+        --------------------------------------------
+
+        **Production Only**
+
+        ***UID:*** the username of the user to connect as
+
+        ***PID:*** the password of the user to connect as
 
     Returns:
         engine (Engine): A SQLAlchemy Engine object.

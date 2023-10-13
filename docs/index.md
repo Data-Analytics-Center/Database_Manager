@@ -4,7 +4,7 @@ Welcome to the Database Manager Documentation!
 
 ## Table of Contents
 
-- [API Documentation](/API_Subpages/description/)
+- [API Documentation](API_Subpages/description/)
 - [SQLAlchemy Core](SQLAlchemyCore.md)
 - [Project Development](project_development.md)
 

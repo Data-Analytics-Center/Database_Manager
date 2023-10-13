@@ -119,7 +119,24 @@ with engine.begin() as connection:
         )
 ```
 
+# Executing Queries
+
+!!! tip "Best Practice"
+    There are 3 main ways to make queries, Pandas, Raw Queries, and SQLAlchemy Core Queries.
+
+    A good rule of thumb is to use pandas for selecting and inserting data whenever your data can be easily read into a dataframe and there are no or little conditional statements.
+
+    Use SQLAlchemy Core Queries for all all CRUD operations whenever you need to do update/delete operations or your data is not easily read into a dataframe (for example, processing post requests on the back-end of a front-end web client).
+
+    Use Raw Queries for complex queries that are not select, insert, update, or delete operations *OR* when the database, schema, or table name is not known until runtime.
+
 ## Executing Pandas Operations
+
+Pandas is great for reading data from a database and inserting data into a database with the following 2 functions.
+
+[pd.read_sql()](https://pandas.pydata.org/docs/reference/api/pandas.read_sql.html)
+
+[pd.DataFrame.to_sql()](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_sql.html)
 
 ### Pandas Select
 
@@ -147,6 +164,38 @@ with engine.begin() as connection:
     dataframe.to_sql("my_table", connection, if_exists="append", index=False, pa)
 ```
 
+## Executing SQLAlchemy Core Queries
+
+The power of SQLAlchemy Core is that it gives you a pythonic way to query a database.
+
+All queries are automatically parameterized so you do not have to worry about SQL injection attacks.
+
+You can perform virtually any CRUD operation easily using SQLAlchemy Core.
+
+You define your table as code in one place so if there are modifications to the table you dont need to change every query you make but instead just change the table definition.
+
+[SQLAlchemy Core Tutorial](https://docs.sqlalchemy.org/en/20/core/tutorial.html)
+
+```python
+from Database_Manager import engine_factory
+from sqlalchemy import select, Table, Column, Integer, String
+
+engine = engine_factory()
+
+my_table = Table(
+    "my_table",
+    meta_data,
+    Column("id", Integer)
+    Column("name", String)
+)
+
+with engine.begin() as connection:
+    result = connection.execute(
+        select([my_table]).where(my_table.c.id == 1)
+    ).fetchall()
+```
+
+
 ## Executing Raw Queries
 
 !!! Warning "SQL Injection Prevention"
@@ -168,6 +217,5 @@ table = "MyTable"
 with engine.begin() as connection:
     result = connection.execute("SELECT * FROM [{database}].[{schema}].[{table}]")
 ```
-
 
 
