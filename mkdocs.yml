@@ -1,4 +1,5 @@
 site_name: Database Manager
+site_url: https://devdac.utsarr.net/docs/database-manager
 
 nav:
   - Home: index.md
