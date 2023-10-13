@@ -16,10 +16,10 @@ Activate your virtual environment
 
 Install the package
 
-`pip install https://github.com/Data-Analytics-Center/Database_Manager`
+`pip install git+https://github.com/Data-Analytics-Center/Database_Manager.git`
 
 To update the package
 
-`pip install --upgrade https://github.com/Data-Analytics-Center/Database_Manager`
+`pip install --upgrade git+https://github.com/Data-Analytics-Center/Database_Manager.git`
 
 To work on further development of the package please visit the `Project Developmnet` page.
