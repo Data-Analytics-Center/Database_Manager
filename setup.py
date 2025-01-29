@@ -7,7 +7,7 @@ with open("README.md") as f:
 
 setup(
     name="database_manager",
-    version="0.0.2",
+    version="0.0.3",
     description="Database Manager package",
     package_dir={"": "src"},
     packages=find_packages(where="src"),
