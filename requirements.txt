@@ -1,7 +1,10 @@
-sqlalchemy
 wheel
 pytest
+pytest-cov
 python-dotenv
+sqlalchemy
 pyodbc
+psycopg2
+pymysql
+pymssql
 pandas
-pytest-cov 

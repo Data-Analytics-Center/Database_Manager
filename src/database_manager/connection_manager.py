@@ -1,6 +1,5 @@
 """Contains database connection logic."""
 
-
 import os
 import urllib.parse
 
@@ -8,7 +7,13 @@ from dotenv import load_dotenv
 from sqlalchemy import Engine, create_engine
 
 
-def engine_factory(database: str = None, *, is_bulk_insert: bool = False) -> Engine:
+def engine_factory(
+    rdbms: str = "mssql",
+    server: str = None,
+    database: str = None,
+    *,
+    is_bulk_insert: bool = False,
+) -> Engine:
     """Create an engine object for connecting to a database.
 
     This function creates a SQLAlchemy Engine connection object to a database.
@@ -19,6 +24,8 @@ def engine_factory(database: str = None, *, is_bulk_insert: bool = False) -> Eng
 
 
     Args:
+        rdbms (str): The flavor of rdbms. Valid value options = ['mssql','mysql','postgres','sqlite']
+        server (str): The name of the server to connect to. In many RDBMS environments this is congruous with the concept of an RDBMS instance. This can come int he form of IP or servername, and may also include a port specification.
         database (str): The name of the database to connect to.
         is_bulk_insert (bool): Whether or not to use fast_executemany for bulk inserts.
 
@@ -26,31 +33,25 @@ def engine_factory(database: str = None, *, is_bulk_insert: bool = False) -> Eng
     !!! info "Enviroment Variables"
         **Always Required**
 
-        ***ENV_TYPE:*** used to determine the environment, can be either `DEV` or `PROD`
+        ***UID:*** the username of the user to connect as
 
-        ***SERVER:*** the server to connect to
-
-        ***DRIVER:*** the driver used to connect to the database
+        ***PID:*** the password of the user to connect as
 
         --------------------------------------------
 
         **Optional**
 
-        ***DATABASE:*** the database to connect to (can be set as environment variable or passed in as a parameter)
+        ***RDBMS:*** the type of RDBMS to connect to (can be set as environment variable or passed in as a parameter)
 
-        --------------------------------------------
+        ***SERVER:*** the server to connect to (can be set as environment variable or passed in as a parameter) NOTE: For rdbms = 'sqlite' this corresponds to the full path where the sqlite db file is located
 
-        **Production Only**
-
-        ***UID:*** the username of the user to connect as
-
-        ***PID:*** the password of the user to connect as
+        ***DATABASE:*** the database to connect to (can be set as environment variable or passed in as a parameter) NOTE: For rdbms = 'sqlite' this corresponds to the file name of the sqlite db file
 
     Returns:
         engine (Engine): A SQLAlchemy Engine object.
 
     Raises:
-        ValueError: If any of the environment variables are not set properly.
+        ValueError: If any of the environment variables are not set properly and no alternative value was passed in by the caller.
 
     Example:
         To just get a SQLAlchemy Engine object, call `engine_factory()`:
@@ -69,9 +70,24 @@ def engine_factory(database: str = None, *, is_bulk_insert: bool = False) -> Eng
     """
     load_dotenv()
 
-    server = os.getenv("SERVER")
+    uid = os.getenv("UID")
+    pid = os.getenv("PID")
 
-    driver = os.getenv("DRIVER")
+    if uid is None or uid == "" or uid.isspace():
+        raise ValueError("UID environment variable is not properly set.")
+    if pid is None or pid == "" or pid.isspace():
+        raise ValueError("PID environment variable is not properly set.")
+
+    if rdbms is None or rdbms == "" or rdbms.isspace():
+        server = os.getenv("RDBMS")
+
+    if server is None or server == "" or server.isspace():
+        server = os.getenv("SERVER")
+
+    if server is None or server == "" or server.isspace():
+        raise ValueError(
+            "SERVER is not set please specify a server as an execute function parameter or environment variable."
+        )
 
     if database is None or database == "" or database.isspace():
         database = os.getenv("DATABASE")
@@ -81,36 +97,17 @@ def engine_factory(database: str = None, *, is_bulk_insert: bool = False) -> Eng
             "DATABASE is not set please specify a database as an execute function parameter or environment variable."
         )
 
-    if driver is None or driver == "" or driver.isspace():
-        raise ValueError("DRIVER environment variable is not properly set.")
+    match rdbms:
+        case "mssql":
+            connection_string = f"mssql+pymssql://{uid}:{urllib.parse.quote_plus(pid)}@{server}/{database}"
+        case "mysql":
+            connection_string = f"mysql+pymysql://{uid}:{urllib.parse.quote_plus(pid)}@{server}/{database}"
+        case "postgres":
+            connection_string = f"postgresql+psycopg2://{uid}:{urllib.parse.quote_plus(pid)}@{server}/{database}"
+        case "sqlite":
+            connection_string = f"sqlite:///{server}/{database}"
+        case _:
+            raise ValueError("Invalid rdbms specified! Valid options: 'mssql' | 'mysql' | 'postgres' | 'sqlite'")
 
-    if server is None or server == "" or server.isspace():
-        raise ValueError("SERVER environment variable is not properly set.")
-
-    env_type = os.getenv("ENV_TYPE")
-
-    if env_type is None or env_type == "" or env_type.isspace():
-        raise ValueError("ENV_TYPE environment variable is not properly set.")
-
-    if env_type == "PROD":
-        uid = os.getenv("UID")
-        pid = os.getenv("PID")
-
-        if uid is None or uid == "" or uid.isspace():
-            raise ValueError("UID environment variable is not properly set.")
-        if pid is None or pid == "" or pid.isspace():
-            raise ValueError("PID environment variable is not properly set.")
-
-        connection_string = f"mssql+pyodbc://{uid}:{urllib.parse.quote_plus(pid)}@{server}/{database}?driver={urllib.parse.quote_plus(driver)}&Encrypt=no"
-
-    else:
-        connection_string = (
-            f"mssql+pyodbc://@{server}/{database}?driver={driver}&Encrypt=no"
-        )
-
-    engine = (
-        create_engine(connection_string, fast_executemany=True)
-        if is_bulk_insert
-        else create_engine(connection_string)
-    )
+    engine = create_engine(connection_string, fast_executemany=True) if is_bulk_insert else create_engine(connection_string)
     return engine

@@ -7,7 +7,7 @@ with open("README.md") as f:
 
 setup(
     name="database_manager",
-    version="0.0.1",
+    version="0.0.2",
     description="Database Manager package",
     package_dir={"": "src"},
     packages=find_packages(where="src"),
@@ -15,14 +15,14 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Data-Analytics-Center/Database_Manager",
     author="Data Analytics Center",
-    author_email="daclab@utsa.edu",
+    author_email="dac@utsa.edu",
     license="MIT",
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.10",
         "Operating System :: OS Independent",
     ],
-    install_requires=["sqlalchemy", "wheel", "python-dotenv", "pyodbc"],
+    install_requires=["sqlalchemy", "wheel", "python-dotenv", "pyodbc", "pandas", "psycopg2", "pymysql", "pymssql"],
     extras_require={
         "dev": ["pytest>=7.0", "twine>=4.0.2"],
     },
