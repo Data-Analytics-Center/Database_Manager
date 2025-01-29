@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.database_manager.connection_manager import engine_factory
+from .connection_manager import engine_factory
 
 
 def insertSQLPandas(
