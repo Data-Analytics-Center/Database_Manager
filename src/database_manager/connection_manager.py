@@ -11,8 +11,6 @@ def engine_factory(
     rdbms: str = "mssql",
     server: str = None,
     database: str = None,
-    *,
-    is_bulk_insert: bool = False,
 ) -> Engine:
     """Create an engine object for connecting to a database.
 
@@ -26,7 +24,6 @@ def engine_factory(
         rdbms (str): The flavor of rdbms. Valid value options = ['mssql','mysql','postgres','sqlite']
         server (str): The name of the server to connect to. In many RDBMS environments this is congruous with the concept of an RDBMS instance. This can come int he form of IP or servername, and may also include a port specification.
         database (str): The name of the database to connect to.
-        is_bulk_insert (bool): Whether or not to use fast_executemany for bulk inserts.
 
 
     !!! info "Enviroment Variables"
@@ -111,5 +108,5 @@ def engine_factory(
         case _:
             raise ValueError("Invalid rdbms specified! Valid options: 'mssql' | 'mysql' | 'postgres' | 'sqlite'")
 
-    engine = create_engine(connection_string, fast_executemany=True) if is_bulk_insert else create_engine(connection_string)
+    engine = create_engine(connection_string)
     return engine
