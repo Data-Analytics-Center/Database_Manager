@@ -8,3 +8,7 @@ psycopg2
 pymysql
 pymssql
 pandas
+mkdocstrings-python
+mkdocstrings
+mkdocs
+mkdocs-material

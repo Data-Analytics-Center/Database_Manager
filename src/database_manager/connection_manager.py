@@ -17,10 +17,9 @@ def engine_factory(
     """Create an engine object for connecting to a database.
 
     This function creates a SQLAlchemy Engine connection object to a database.
-    It relies on environment variables for the connection parameters,
-    including the driver, server, database, and environment type. Database can be
-    passed as a parameter to this function, or it can be set as an environment variable.
-    Environment variables are loaded from a .env file in the root directory of the project.
+    It relies on environment variables for the connection parameters.
+    UID and PID are always required, while RDBMS, SERVER, and DATABASE are optional.
+    If the optional parameters are not set as environment variables, they have to be passed in as function parameters.
 
 
     Args:
@@ -79,7 +78,10 @@ def engine_factory(
         raise ValueError("PID environment variable is not properly set.")
 
     if rdbms is None or rdbms == "" or rdbms.isspace():
-        server = os.getenv("RDBMS")
+        rdbms = os.getenv("RDBMS")
+
+    if rdbms is None or rdbms == "" or rdbms.isspace():
+        raise ValueError("RDBMS is not set please specify a RDBMS as an execute function parameter or environment variable.")
 
     if server is None or server == "" or server.isspace():
         server = os.getenv("SERVER")
