@@ -29,9 +29,12 @@ def insert_sql_pandas(
     Raises:
         Exception: If an error occurs during the insert operation.
     """
-    if not isinstance(table, str):
+    if isinstance(table, str):
+        table = table
+    elif isinstance(table, Table):
+        table = table.name
+    else:
         raise ValueError("table must be a string or a Table object")
-    table = table.name
 
     try:
         with engine_factory(rdbms=rdbms, server=server, database=database).begin() as connection:
