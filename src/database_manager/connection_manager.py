@@ -11,7 +11,6 @@ def engine_factory(
     rdbms: str = None,
     server: str = None,
     database: str = None,
-    mssql_driver: str = None,
 ) -> Engine:
     """Create an engine object for connecting to a database.
 
@@ -25,7 +24,6 @@ def engine_factory(
         rdbms (str): The flavor of rdbms. Valid value options = ['mssql','mysql','postgres','sqlite']
         server (str): The name of the server to connect to. In many RDBMS environments this is congruous with the concept of an RDBMS instance. This can come int the form of IP or servername, and may also include a port specification.
         database (str): The name of the database to connect to.
-        mssql_driver (str): The pyodbc driver for MS SQL. Will only be considered when rdbms is mssql. Will take precedence over pymssql if specified.
 
 
     !!! info "Enviroment Variables"
@@ -44,6 +42,8 @@ def engine_factory(
         ***SERVER:*** the server to connect to (can be set as environment variable or passed in as a parameter) NOTE: For rdbms = 'sqlite' this corresponds to the full path where the sqlite db file is located
 
         ***DATABASE:*** the database to connect to (can be set as environment variable or passed in as a parameter) NOTE: For rdbms = 'sqlite' this corresponds to the file name of the sqlite db file
+
+        ***MSSQL_DRIVER:*** the MSSQL Driver to use. Will only be considered if rdbms is 'mssql'. If specified, takes precedence over pymssql.
 
     Returns:
         engine (Engine): A SQLAlchemy Engine object.
@@ -100,6 +100,7 @@ def engine_factory(
 
     match rdbms:
         case "mssql":
+            mssql_driver = os.getenv("MSSQL_DRIVER")
             if mssql_driver:
                 connection_string = f"mssql+pyodbc://{uid}:{urllib.parse.quote_plus(pid)}@{server}/{database}?driver={mssql_driver}&TrustServerCertificate=yes"
             else:
