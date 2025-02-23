@@ -8,9 +8,10 @@ from sqlalchemy import Engine, create_engine
 
 
 def engine_factory(
-    rdbms: str = "mssql",
+    rdbms: str = None,
     server: str = None,
     database: str = None,
+    mssql_driver: str = None,
 ) -> Engine:
     """Create an engine object for connecting to a database.
 
@@ -22,8 +23,9 @@ def engine_factory(
 
     Args:
         rdbms (str): The flavor of rdbms. Valid value options = ['mssql','mysql','postgres','sqlite']
-        server (str): The name of the server to connect to. In many RDBMS environments this is congruous with the concept of an RDBMS instance. This can come int he form of IP or servername, and may also include a port specification.
+        server (str): The name of the server to connect to. In many RDBMS environments this is congruous with the concept of an RDBMS instance. This can come int the form of IP or servername, and may also include a port specification.
         database (str): The name of the database to connect to.
+        mssql_driver (str): The pyodbc driver for MS SQL. Will only be considered when rdbms is mssql. Will take precedence over pymssql if specified.
 
 
     !!! info "Enviroment Variables"
@@ -98,7 +100,10 @@ def engine_factory(
 
     match rdbms:
         case "mssql":
-            connection_string = f"mssql+pymssql://{uid}:{urllib.parse.quote_plus(pid)}@{server}/{database}"
+            if mssql_driver:
+                connection_string = f"mssql+pyodbc://{uid}:{urllib.parse.quote_plus(pid)}@{server}/{database}?driver={mssql_driver}&TrustServerCertificate=yes"
+            else:
+                connection_string = f"mssql+pymssql://{uid}:{urllib.parse.quote_plus(pid)}@{server}/{database}"
         case "mysql":
             connection_string = f"mysql+pymysql://{uid}:{urllib.parse.quote_plus(pid)}@{server}/{database}"
         case "postgres":
